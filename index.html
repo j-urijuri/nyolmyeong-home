@@ -8698,12 +8698,27 @@ function renderPlaylist(){
  });
  syncPlayUI();
 }
+function currentMyHomeTheme(){
+ const u=AUS[currentAU];
+ if(!u)return null;
+ return {au:currentAU,bg:u.bg,shell:u.shell,surface:u.surface,accent:u.accent,accent2:u.accent2,line:u.line,ink:u.ink,muted:u.muted,home:u.home};
+}
+function syncMyHomeTheme(){
+ const theme=currentMyHomeTheme();
+ if(!theme)return;
+ try{localStorage.setItem(`nyol:homepage-theme:${currentAU}:v1`,JSON.stringify(theme))}catch(_){ }
+ const f=document.getElementById("nyolMyHomeFrame");
+ if(f?.contentWindow){
+   try{f.contentWindow.postMessage({source:"nyol-home-host",action:"theme",theme},"*")}catch(_){ }
+ }
+}
 function applyAUVisuals(){
  document.body.dataset.au=currentAU;
  const u=AUS[currentAU],r=document.documentElement;
  r.style.setProperty("--bg",u.bg);r.style.setProperty("--shell",u.shell);r.style.setProperty("--accent",u.accent);r.style.setProperty("--accent2",u.accent2);r.style.setProperty("--roomWall",u.roomWall);r.style.setProperty("--roomFloor",u.roomFloor);
  r.style.setProperty("--theme-outer",u.bg);r.style.setProperty("--theme-shell",u.shell);r.style.setProperty("--theme-surface",u.surface);r.style.setProperty("--theme-accent",u.accent);r.style.setProperty("--theme-accent2",u.accent2);r.style.setProperty("--theme-line",u.line);r.style.setProperty("--theme-ink",u.ink);r.style.setProperty("--theme-muted",u.muted);r.style.setProperty("--theme-home",u.home);
  const hau=document.getElementById("homeAu");if(hau)hau.textContent=auLabel(currentAU);
+ syncMyHomeTheme();
  applyStudioEffects();
 }
 document.getElementById("playBtn").onclick=togglePlaylistPlay;
@@ -10600,7 +10615,7 @@ rebuildAUControls();renderPlaylist();render();renderTopUpdateWidget();
 
   function myhomeUrl(mode,embed=true){
     const q=new URLSearchParams({au:currentAU||"base",mode:mode||"play"});
-    q.set("build","v223");
+    q.set("build","v224");
     if(embed)q.set("embed","1");
     return `${MYHOME_URL}?${q.toString()}`;
   }
@@ -10641,7 +10656,7 @@ window.addEventListener("message",e=>{
 // The old HOME canvas setup is intentionally disabled.
   setupMiniHome=function(){
     const f=document.getElementById("nyolMyHomeFrame");
-    if(f)f.addEventListener("load",()=>{const s=document.getElementById("nyolMyHomeStatus");if(s)s.textContent="MY HOME LOADED"},{once:true});
+    if(f)f.addEventListener("load",()=>{const s=document.getElementById("nyolMyHomeStatus");if(s)s.textContent="MY HOME LOADED";syncMyHomeTheme()},{once:true});
   };
   miniHomeDestroy=function(){ MINI_HOME_GAME=null; };
 

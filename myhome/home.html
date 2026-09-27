@@ -159,6 +159,19 @@ const qs=new URLSearchParams(location.search);
 const EMBED=qs.get('embed')==='1';if(EMBED)document.body.classList.add('is-embed');
 const AU=qs.get('au')||'base';
 document.body.dataset.au=AU;
+const THEME_STORE_KEY=`nyol:homepage-theme:${AU}:v1`;
+function applyHostTheme(theme){
+ if(!theme||typeof theme!=='object')return;
+ const r=document.documentElement;
+ const map={ink:'--ink',muted:'--muted',surface:'--paper',line:'--line',shell:'--ui-shell',accent:'--ui-accent',accent2:'--ui-accent2'};
+ for(const [k,v] of Object.entries(map)){if(theme[k])r.style.setProperty(v,theme[k])}
+ if(theme.surface)r.style.setProperty('--cream',theme.surface);
+ if(theme.accent2){r.style.setProperty('--pink',theme.accent2);r.style.setProperty('--pink2',theme.accent2)}
+}
+function loadStoredHostTheme(){
+ try{const t=JSON.parse(localStorage.getItem(THEME_STORE_KEY)||'null');if(t)applyHostTheme(t)}catch(_){ }
+}
+loadStoredHostTheme();
 const START_MODE=(qs.get('mode')==='edit')?'edit':'play';
 const STORE_KEY=`nyol:myhome:${AU}:layout:v1`;
 const SNAP=.20;
@@ -556,6 +569,7 @@ window.addEventListener('message',e=>{
  if(d.action==='edit')setMode('edit');
  if(d.action==='view')resetCamera();
  if(d.action==='outside')document.getElementById('outsideBtn')?.click();
+ if(d.action==='theme'&&d.theme){applyHostTheme(d.theme);try{localStorage.setItem(THEME_STORE_KEY,JSON.stringify(d.theme))}catch(_){ }}
 });
 
 function tick(now){

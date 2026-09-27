@@ -210,7 +210,7 @@ body.is-embed .stage{border-top:0!important;box-shadow:none!important}
 <body data-mode="play" data-dirty="0">
 <div id="app">
 <header class="topbar">
-  <div class="brand"><div class="brandMark">⌂</div><div><b>MY HOME · OUTDOOR</b><small>WORLD MAP · v223</small></div></div>
+  <div class="brand"><div class="brandMark">⌂</div><div><b>MY HOME · OUTDOOR</b><small>WORLD MAP · v224</small></div></div>
   <div class="spacer"></div>
   <button class="topBtn active" id="playBtn">PLAY</button>
   <button class="topBtn edit" id="editBtn">EDIT</button>
@@ -288,6 +288,18 @@ const EMBED=qs.get('embed')==='1';
 if(EMBED)document.body.classList.add('is-embed');
 const AU=qs.get('au')||'base', START_MODE=qs.get('mode')==='edit'?'edit':'play';
 document.body.dataset.au=AU;
+const THEME_STORE_KEY=`nyol:homepage-theme:${AU}:v1`;
+function applyHostTheme(theme){
+ if(!theme||typeof theme!=='object')return;
+ const r=document.documentElement;
+ const map={ink:'--ink',muted:'--muted',surface:'--paper',line:'--line',shell:'--shell',accent:'--accent',accent2:'--accent2'};
+ for(const [k,v] of Object.entries(map)){if(theme[k])r.style.setProperty(v,theme[k])}
+ if(theme.accent2)r.style.setProperty('--pink',theme.accent2);
+}
+function loadStoredHostTheme(){
+ try{const t=JSON.parse(localStorage.getItem(THEME_STORE_KEY)||'null');if(t)applyHostTheme(t)}catch(_){ }
+}
+loadStoredHostTheme();
 const STORE=`nyol:myhome:${AU}:outdoor:v1`;
 const ROOM={minX:-20,maxX:20,minZ:-20,maxZ:20};
 const canvas=document.getElementById('scene'),stage=document.getElementById('stage');
@@ -1006,6 +1018,7 @@ window.addEventListener('message',e=>{
  if(d.action==='edit')setMode('edit');
  if(d.action==='map')document.getElementById('mapBtn')?.click();
  if(d.action==='view')resetCamera();
+ if(d.action==='theme'&&d.theme){applyHostTheme(d.theme);try{localStorage.setItem(THEME_STORE_KEY,JSON.stringify(d.theme))}catch(_){ }}
 });
 
 function tick(t){const dt=Math.min(.04,(t-state.last)/1000||0);state.last=t;updateMove(dt);updateCamera(dt);if(state.mixer)state.mixer.update(dt);renderer.render(scene,camera);requestAnimationFrame(tick)}
