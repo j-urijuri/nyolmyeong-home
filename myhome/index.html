@@ -156,11 +156,22 @@ body.is-embed #app{height:calc(100% - 2px)!important;border:1px solid var(--line
 #scene{filter:saturate(.52) contrast(.95) brightness(1)!important;opacity:1!important}
 </style>
 <style id="v214-house-opaque-fix">/* house materials are forced opaque; fallback uses the same AU-independent soft palette */</style>
+
+<style id="v217-embed-and-house-fix">
+/* In embed mode the homepage screen is the only rounded frame. */
+body.is-embed{padding:0!important;background:transparent!important}
+body.is-embed #app{height:100%!important;border:0!important;border-radius:0!important;box-shadow:none!important;overflow:hidden!important}
+body.is-embed .stage{border-radius:0!important}
+/* Never flash the temporary/partially loaded world before the real house exists. */
+body:not(.world-ready) #scene{opacity:0!important}
+body.world-ready #scene{opacity:1!important}
+#scene{transition:opacity .14s ease!important}
+</style>
 </head>
 <body data-mode="play" data-dirty="0">
 <div id="app">
 <header class="topbar">
-  <div class="brand"><div class="brandMark">⌂</div><div><b>MY HOME · OUTDOOR</b><small>WORLD MAP · v214</small></div></div>
+  <div class="brand"><div class="brandMark">⌂</div><div><b>MY HOME · OUTDOOR</b><small>WORLD MAP · v217</small></div></div>
   <div class="spacer"></div>
   <button class="topBtn active" id="playBtn">PLAY</button>
   <button class="topBtn edit" id="editBtn">EDIT</button>
@@ -361,7 +372,11 @@ function makeHouseOpaque(obj){
    m.depthWrite=true;
    m.depthTest=true;
    m.side=THREE.DoubleSide;
-   if(m.map){m.map.colorSpace=THREE.SRGBColorSpace;m.map.needsUpdate=true}
+   if(m.map){
+    /* FBX diffuse colors were multiplying the atlas and turning the whole house brown. */
+    if(m.color)m.color.set(0xffffff);
+    m.map.colorSpace=THREE.SRGBColorSpace;m.map.needsUpdate=true;
+   }
    m.needsUpdate=true;
   });
  });
@@ -489,15 +504,22 @@ async function buildWorld(){
  addPlaza(-2.7,.2,.72);
 
  const jobs=[];
- createHouseFallback();
  jobs.push(asset('house').then(h=>{
    makeHouseOpaque(h);
    const root=new THREE.Group();root.userData.interaction='enterHome';root.add(h);root.position.set(0,.025,-5.00);root.rotation.y=0;
    root.traverse(n=>{n.visible=true;if(n.isMesh)n.frustumCulled=false});
    scene.add(root);state.houseRoot=root;
-   if(state.houseFallback){scene.remove(state.houseFallback);state.houseFallback=null}
+   document.body.classList.add('world-ready');
+   const loadingBox=document.getElementById('loading');if(loadingBox)loadingBox.style.display='none';
+   parent.postMessage({source:'nyol-myhome',type:'ready',scene:'outdoor',au:AU},'*');
    return true;
- }).catch(e=>{console.warn('house.fbx failed; visible fallback retained',e);return true;}));
+ }).catch(e=>{
+   console.warn('house.fbx failed',e);
+   document.body.classList.add('world-ready');
+   const loadingBox=document.getElementById('loading');
+   if(loadingBox){loadingBox.style.display='block';loadingBox.innerHTML='HOUSE LOAD ERROR<small>house.fbx를 불러오지 못했어요</small>'}
+   return false;
+ }));
 
  const trees=[
    ['treeLarge',-5.7,-4.4,0,.86],['treeLarge',5.6,-4.2,0,.85],
@@ -518,7 +540,7 @@ async function buildWorld(){
  const count=results.filter(r=>r.status==='fulfilled').length;
  const failed=results.length-count;
  if(failed)console.warn(`${failed} outdoor assets failed to load`);
- document.getElementById('status').textContent=`${count} outdoor objects · ${state.houseRoot?'HOUSE OK':'HOUSE FALLBACK'} · soft world`;
+ document.getElementById('status').textContent=`${count} outdoor objects · ${state.houseRoot?'HOUSE OK':'HOUSE ERROR'} · soft world`;
  return count;
 }
 
@@ -875,11 +897,6 @@ function resize(){const r=stage.getBoundingClientRect(),w=Math.max(1,r.width|0),
 addEventListener('resize',resize);resize();
 
 const worldLoad=buildWorld();
-requestAnimationFrame(()=>{
- const box=document.getElementById('loading');
- if(box)box.style.display='none';
- parent.postMessage({source:'nyol-myhome',type:'ready',scene:'outdoor',au:AU},'*');
-});
 worldLoad.then(()=>{
  updateEditInfo();updateMiniPlayer();
 }).catch(err=>{

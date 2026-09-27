@@ -6437,6 +6437,42 @@ body[data-skin] :is(.auPickerBtn,.settingsBtn,.studioEntry),.auPickerBtn,.settin
 .topUpdateRowAction{min-width:50px!important;gap:4px!important}
 .topUpdateRowAction i{min-width:48px!important;height:20px!important;padding:0 7px!important}
 </style>
+
+<style id="v217-myhome-host-seam-fix">
+/* v217: HOME is one continuous recessed screen.
+   The parent screen owns the rounded outer corners; the iframe gets no second frame/gutter. */
+#nyolConsoleShell .content:has(.myhomeEmbedShell){
+  padding:0!important;
+  background:transparent!important;
+  overflow:hidden!important;
+}
+#nyolConsoleShell .content:has(.myhomeEmbedShell) .myhomeEmbedShell,
+#nyolConsoleShell .content:has(.myhomeEmbedShell) .myhomeEmbedCard,
+#nyolConsoleShell .content:has(.myhomeEmbedShell) .myhomeEmbedFrameWrap,
+#nyolConsoleShell .content:has(.myhomeEmbedShell) .myhomeEmbedFrame{
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  box-shadow:none!important;
+  background:transparent!important;
+}
+#nyolConsoleShell .content:has(.myhomeEmbedShell) .myhomeEmbedShell,
+#nyolConsoleShell .content:has(.myhomeEmbedShell) .myhomeEmbedCard,
+#nyolConsoleShell .content:has(.myhomeEmbedShell) .myhomeEmbedFrameWrap{
+  width:100%!important;
+  height:100%!important;
+  min-height:0!important;
+  border-radius:0!important;
+  overflow:hidden!important;
+}
+#nyolConsoleShell .content:has(.myhomeEmbedShell) .myhomeEmbedFrame{
+  display:block!important;
+  width:100%!important;
+  height:100%!important;
+  min-height:0!important;
+  border-radius:0!important;
+}
+</style>
 </head>
 <body data-wall="plain" data-skin="cream" data-au="base">
 <div id="viewport">
