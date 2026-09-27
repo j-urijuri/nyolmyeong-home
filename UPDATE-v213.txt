@@ -1,8 +1,0 @@
-V214 FIX
-
-- MyHome house: force real house materials fully opaque and AU-independent.
-- MyHome fallback house: lighter neutral/pink palette instead of brown.
-- MyHome world grade: still soft, but no washed-out transparent look.
-- SETTINGS: compact vertical spacing.
-- Recent updates dropdown: narrowed from 510px to 380px and rows compacted.
-- Existing walking direction and unrelated features preserved.
