@@ -3,11 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<<<<<<< HEAD
 <title>NYOL MY HOME · OUTDOOR v214</title>
-=======
-<title>NYOL MY HOME · OUTDOOR v213</title>
->>>>>>> f21bfa5981f0e2a7015f7400816053ab414be627
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <script type="importmap">
 {"imports":{
@@ -157,23 +153,14 @@ body.is-embed #app{height:calc(100% - 2px)!important;border:1px solid var(--line
 .chip.active{background:color-mix(in srgb,var(--paper) 58%,var(--accent2) 42%)!important;border-color:color-mix(in srgb,var(--line) 65%,var(--accent2))!important}
 .footer{background:color-mix(in srgb,var(--paper) 94%,var(--shell))!important;border-color:var(--line)!important;color:var(--ink)!important}.footer span{color:var(--muted)!important}
 /* World color is deliberately AU-independent, just softened. */
-<<<<<<< HEAD
 #scene{filter:saturate(.52) contrast(.95) brightness(1)!important;opacity:1!important}
 </style>
 <style id="v214-house-opaque-fix">/* house materials are forced opaque; fallback uses the same AU-independent soft palette */</style>
-=======
-#scene{filter:saturate(.42) contrast(.89) brightness(1.015)!important}
-</style>
->>>>>>> f21bfa5981f0e2a7015f7400816053ab414be627
 </head>
 <body data-mode="play" data-dirty="0">
 <div id="app">
 <header class="topbar">
-<<<<<<< HEAD
   <div class="brand"><div class="brandMark">⌂</div><div><b>MY HOME · OUTDOOR</b><small>WORLD MAP · v214</small></div></div>
-=======
-  <div class="brand"><div class="brandMark">⌂</div><div><b>MY HOME · OUTDOOR</b><small>WORLD MAP · v213</small></div></div>
->>>>>>> f21bfa5981f0e2a7015f7400816053ab414be627
   <div class="spacer"></div>
   <button class="topBtn active" id="playBtn">PLAY</button>
   <button class="topBtn edit" id="editBtn">EDIT</button>
@@ -360,7 +347,6 @@ function forceVisible(obj){
   }
  });
 }
-<<<<<<< HEAD
 function makeHouseOpaque(obj){
  obj.traverse(n=>{
   n.visible=true;
@@ -380,8 +366,6 @@ function makeHouseOpaque(obj){
   });
  });
 }
-=======
->>>>>>> f21bfa5981f0e2a7015f7400816053ab414be627
 
 function outline(obj,color='#786068',opacity=.28,inflate=1.008){
  const a=[];obj.traverse(n=>{if(n.isMesh&&!n.userData.shell)a.push(n)});
@@ -489,17 +473,10 @@ function pathGeom(points,width,color=0xdcc3a5){
 function addPlaza(x,z,r,color=0xe5ccb0){const m=new THREE.Mesh(new THREE.CircleGeometry(r,48),mat(color));m.rotation.x=-Math.PI/2;m.position.set(x,.014,z);scene.add(m);return m}
 function createHouseFallback(){
  const root=new THREE.Group();root.userData.interaction='enterHome';
-<<<<<<< HEAD
  const body=mesh(new THREE.BoxGeometry(3.25,1.75,2.35),0xeee1d8);body.position.y=.88;
  const roof=mesh(new THREE.ConeGeometry(2.35,1.22,4),0xc7a5aa);roof.rotation.y=Math.PI/4;roof.scale.z=.76;roof.position.y=2.05;
  const door=mesh(new THREE.BoxGeometry(.62,1.12,.08),0xa58b82);door.position.set(0,.56,1.205);
  const w1=mesh(new THREE.BoxGeometry(.68,.56,.07),0xbccfcb);w1.position.set(-.94,1.10,1.21);
-=======
- const body=mesh(new THREE.BoxGeometry(3.25,1.75,2.35),0xd9c4b7);body.position.y=.88;
- const roof=mesh(new THREE.ConeGeometry(2.35,1.22,4),0xb98588);roof.rotation.y=Math.PI/4;roof.scale.z=.76;roof.position.y=2.05;
- const door=mesh(new THREE.BoxGeometry(.62,1.12,.08),0x846a60);door.position.set(0,.56,1.205);
- const w1=mesh(new THREE.BoxGeometry(.68,.56,.07),0xaec5c3);w1.position.set(-.94,1.10,1.21);
->>>>>>> f21bfa5981f0e2a7015f7400816053ab414be627
  const w2=w1.clone();w2.position.x=.94;
  root.add(body,roof,door,w1,w2);root.position.set(0,.025,-5.00);root.renderOrder=1;
  scene.add(root);state.houseFallback=root;return root;
@@ -514,11 +491,7 @@ async function buildWorld(){
  const jobs=[];
  createHouseFallback();
  jobs.push(asset('house').then(h=>{
-<<<<<<< HEAD
    makeHouseOpaque(h);
-=======
-   forceVisible(h);
->>>>>>> f21bfa5981f0e2a7015f7400816053ab414be627
    const root=new THREE.Group();root.userData.interaction='enterHome';root.add(h);root.position.set(0,.025,-5.00);root.rotation.y=0;
    root.traverse(n=>{n.visible=true;if(n.isMesh)n.frustumCulled=false});
    scene.add(root);state.houseRoot=root;
