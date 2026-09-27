@@ -171,7 +171,7 @@ body.world-ready #scene{opacity:1!important}
 <body data-mode="play" data-dirty="0">
 <div id="app">
 <header class="topbar">
-  <div class="brand"><div class="brandMark">⌂</div><div><b>MY HOME · OUTDOOR</b><small>WORLD MAP · v218</small></div></div>
+  <div class="brand"><div class="brandMark">⌂</div><div><b>MY HOME · OUTDOOR</b><small>WORLD MAP · v219</small></div></div>
   <div class="spacer"></div>
   <button class="topBtn active" id="playBtn">PLAY</button>
   <button class="topBtn edit" id="editBtn">EDIT</button>
@@ -395,7 +395,7 @@ const loader=new FBXLoader();
 let housePaletteTexturePromise=null;
 async function getHousePaletteTexture(){
  if(!housePaletteTexturePromise){
-  housePaletteTexturePromise=new THREE.TextureLoader().loadAsync('./assets/3d/outdoor/tiny_treats_texture_house_v218.png').then(t=>{
+  housePaletteTexturePromise=new THREE.TextureLoader().loadAsync('./assets/3d/outdoor/tiny_treats_texture_house_v219.png').then(t=>{
    t.colorSpace=THREE.SRGBColorSpace;
    t.needsUpdate=true;
    return t;
@@ -409,6 +409,9 @@ async function applyHousePalette(obj){
   if(!n.isMesh)return;
   const mats=Array.isArray(n.material)?n.material:[n.material];
   mats.filter(Boolean).forEach(m=>{
+   const original=m.color?.clone?.()||new THREE.Color('#d8d0ca');
+   const hsl={h:0,s:0,l:0};original.getHSL(hsl);
+
    if(m.map){
     const src=m.map, t=palette.clone();
     t.mapping=src.mapping;
@@ -421,9 +424,30 @@ async function applyHousePalette(obj){
     t.colorSpace=THREE.SRGBColorSpace;
     t.needsUpdate=true;
     m.map=t;
+    if(m.color)m.color.set(0xffffff);
+   }else if(m.color){
+    /* Some house parts are FBX diffuse-only, so recolor those too.
+       This prevents the old brown/taupe diffuse from surviving beside the atlas. */
+    if(hsl.s<.18){
+      m.color.set('#ddd6d1');              // soft warm gray / ivory
+    }else if(hsl.h<.13 || hsl.h>.94){
+      m.color.set('#c99591');              // muted dusty rose / roof
+    }else if(hsl.h>.45 && hsl.h<.62){
+      m.color.set('#8fb9bc');              // muted teal / door detail
+    }else if(hsl.h>.20 && hsl.h<.45){
+      m.color.set('#a8b99a');              // muted green
+    }else{
+      m.color.set('#d5cbc6');              // neutral fallback, never brown
+    }
    }
-   if(m.color)m.color.set(0xffffff);
-   m.opacity=1;m.transparent=false;m.alphaTest=0;m.depthWrite=true;m.depthTest=true;m.side=THREE.DoubleSide;m.needsUpdate=true;
+
+   m.opacity=1;
+   m.transparent=false;
+   m.alphaTest=0;
+   m.depthWrite=true;
+   m.depthTest=true;
+   m.side=THREE.DoubleSide;
+   m.needsUpdate=true;
   });
  });
 }

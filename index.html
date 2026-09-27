@@ -6487,6 +6487,51 @@ body[data-skin] :is(.auPickerBtn,.settingsBtn,.studioEntry),.auPickerBtn,.settin
   box-shadow:none!important;
 }
 </style>
+
+<style id="v219-myhome-host-final">
+/* v219: HOME has one continuous rounded viewport. Use the existing HOME state class directly. */
+#nyolConsoleShell #content.homeFill{
+  padding:0!important;
+  margin:0!important;
+  background:transparent!important;
+  overflow:hidden!important;
+}
+#nyolConsoleShell #content.homeFill .myhomeEmbedShell,
+#nyolConsoleShell #content.homeFill .myhomeEmbedCard,
+#nyolConsoleShell #content.homeFill .myhomeEmbedFrameWrap{
+  display:block!important;
+  width:100%!important;
+  height:100%!important;
+  min-height:0!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+#nyolConsoleShell #content.homeFill .myhomeEmbedShell,
+#nyolConsoleShell #content.homeFill .myhomeEmbedCard,
+#nyolConsoleShell #content.homeFill .myhomeEmbedFrameWrap{
+  border-radius:14px!important;
+  overflow:hidden!important;
+  clip-path:inset(0 round 14px)!important;
+  contain:paint!important;
+}
+#nyolConsoleShell #content.homeFill .myhomeEmbedFrame{
+  display:block!important;
+  width:100%!important;
+  height:100%!important;
+  min-height:0!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:14px!important;
+  clip-path:inset(0 round 14px)!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+</style>
+
 </head>
 <body data-wall="plain" data-skin="cream" data-au="base">
 <div id="viewport">
@@ -10497,7 +10542,7 @@ rebuildAUControls();renderPlaylist();render();renderTopUpdateWidget();
 
   function myhomeUrl(mode,embed=true){
     const q=new URLSearchParams({au:currentAU||"base",mode:mode||"play"});
-    q.set("build","v218");
+    q.set("build","v219");
     if(embed)q.set("embed","1");
     return `${MYHOME_URL}?${q.toString()}`;
   }
