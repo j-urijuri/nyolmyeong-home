@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>NYOL MY HOME · OUTDOOR v209</title>
+<title>NYOL MY HOME · OUTDOOR v210</title>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <script type="importmap">
 {"imports":{
@@ -62,7 +62,7 @@ body.is-embed .hint{top:10px}
 
 </style>
 
-<style id="v209-time-sky">
+<style id="v210-time-sky">
 :root{
   --sky-top:#a8dcf2;
   --sky-bottom:#e7f4f3;
@@ -94,7 +94,7 @@ body[data-sky="night"] .stage::before{
 </style>
 
 
-<style id="v209-myhome-buttons">
+<style id="v210-myhome-buttons">
 .topbar{
   height:46px!important;
   padding:6px 9px!important;
@@ -127,17 +127,17 @@ body.is-embed .topBtn{height:25px!important;min-width:39px!important;padding:0 8
 body.is-embed .brandMark{width:25px!important;height:25px!important}
 </style>
 
-<style id="v209-pastel-filter">
+<style id="v210-pastel-filter">
 #scene{filter:saturate(.73) contrast(.93) brightness(1.045)}
 </style>
-<style id="v209-soft-pastel">
+<style id="v210-soft-pastel">
 #scene{filter:saturate(.56) contrast(.90) brightness(1.075)}
 </style>
 </head>
 <body data-mode="play" data-dirty="0">
 <div id="app">
 <header class="topbar">
-  <div class="brand"><div class="brandMark">⌂</div><div><b>MY HOME · OUTDOOR</b><small>WORLD MAP · v209</small></div></div>
+  <div class="brand"><div class="brandMark">⌂</div><div><b>MY HOME · OUTDOOR</b><small>WORLD MAP · v210</small></div></div>
   <div class="spacer"></div>
   <button class="topBtn active" id="playBtn">PLAY</button>
   <button class="topBtn edit" id="editBtn">EDIT</button>
@@ -185,6 +185,25 @@ body.is-embed .brandMark{width:25px!important;height:25px!important}
 </main>
 <footer class="footer"><i class="dot"></i><b id="auLabel">BASE</b><span>OUTDOOR WORLD</span><span>·</span><span id="status">assets loading</span><div class="spacer"></div><span id="dirty"></span></footer>
 </div>
+
+
+<script id="runtime-error-watch">
+window.addEventListener('error', function(e){
+  const box=document.getElementById('loading');
+  if(box){
+    box.style.display='block';
+    box.innerHTML='MAP RUNTIME ERROR<small>'+String(e.message||'unknown error')+'</small>';
+  }
+});
+window.addEventListener('unhandledrejection', function(e){
+  const box=document.getElementById('loading');
+  if(box){
+    box.style.display='block';
+    const msg=e.reason && (e.reason.message || e.reason);
+    box.innerHTML='MAP LOAD ERROR<small>'+String(msg||'unknown error')+'</small>';
+  }
+});
+</script>
 
 <script type="module">
 import * as THREE from 'three';
@@ -256,7 +275,7 @@ let layout=(()=>{try{const x=JSON.parse(localStorage.getItem(STORE)||'null');if(
 function mat(c){return new THREE.MeshBasicMaterial({color:c,side:THREE.DoubleSide})}
 function mesh(g,c){return new THREE.Mesh(g,mat(c))}
 
-const ground=new THREE.Mesh(new THREE.PlaneGeometry(500,500),basicMat(0xa8c88f));
+const ground=new THREE.Mesh(new THREE.PlaneGeometry(500,500),mat(0xa8c88f));
 ground.rotation.x=-Math.PI/2;ground.position.y=-.02;ground.name='ground';scene.add(ground);
 new THREE.TextureLoader().load('./assets/3d/outdoor/tiny_treats_grass_texture.png',tex=>{
   tex.wrapS=tex.wrapT=THREE.RepeatWrapping;tex.repeat.set(250,250);tex.colorSpace=THREE.SRGBColorSpace;
@@ -394,9 +413,9 @@ function pathGeom(points,width,color=0xdcc3a5){
               A[0]+nx,.012,A[1]+nz, B[0]-nx,.012,B[1]-nz, A[0]-nx,.012,A[1]-nz);
  }
  const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(verts,3));g.computeVertexNormals();
- const m=new THREE.Mesh(g,basicMat(color));scene.add(m);return m;
+ const m=new THREE.Mesh(g,mat(color));scene.add(m);return m;
 }
-function addPlaza(x,z,r,color=0xe5ccb0){const m=new THREE.Mesh(new THREE.CircleGeometry(r,48),basicMat(color));m.rotation.x=-Math.PI/2;m.position.set(x,.014,z);scene.add(m);return m}
+function addPlaza(x,z,r,color=0xe5ccb0){const m=new THREE.Mesh(new THREE.CircleGeometry(r,48),mat(color));m.rotation.x=-Math.PI/2;m.position.set(x,.014,z);scene.add(m);return m}
 async function buildWorld(){
  // Build the approved open field immediately; all FBX assets load in parallel.
  pathGeom([[0,12],[0,8],[.1,5],[-.1,2.3],[-.3,-.3],[-.25,-3.9]],.72);
@@ -783,13 +802,21 @@ document.querySelector('.miniMapBox').addEventListener('click',e=>{
 function resize(){const r=stage.getBoundingClientRect(),w=Math.max(1,r.width|0),h=Math.max(1,r.height|0);renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix()}
 addEventListener('resize',resize);resize();
 
-buildWorld().then(()=>{
- document.getElementById('loading').style.display='none';
- updateEditInfo();updateMiniPlayer();
+const worldLoad=buildWorld();
+requestAnimationFrame(()=>{
+ const box=document.getElementById('loading');
+ if(box)box.style.display='none';
  parent.postMessage({source:'nyol-myhome',type:'ready',scene:'outdoor',au:AU},'*');
+});
+worldLoad.then(()=>{
+ updateEditInfo();updateMiniPlayer();
 }).catch(err=>{
  console.error(err);
- document.getElementById('loading').innerHTML='MAP LOAD ERROR<small>새로고침해 주세요</small>';
+ const box=document.getElementById('loading');
+ if(box){
+   box.style.display='block';
+   box.innerHTML='MAP LOAD ERROR<small>'+String(err?.message||err||'새로고침해 주세요')+'</small>';
+ }
 });
 loadCharacter().then(ok=>{
  if(ok){updateMiniPlayer();toast('캐릭터가 도착했어요')}
