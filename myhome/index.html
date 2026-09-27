@@ -168,8 +168,8 @@ body.world-ready #scene{opacity:1!important}
 #scene{transition:opacity .14s ease!important}
 </style>
 
-<style id="v220-visible-corner-fix">
-/* v220: round the ACTUAL embedded MyHome surface, not only the parent iframe wrapper. */
+<style id="v221-visible-corner-fix">
+/* v221: round the actual stage top corners too; preserve v220 house fix. */
 body.is-embed{
   border-radius:14px!important;
   overflow:hidden!important;
@@ -188,7 +188,7 @@ body.is-embed .topbar{
 }
 /* Keep the stage flush: no fake inner card, no highlighted gap. */
 body.is-embed .stage{
-  border-radius:0 0 14px 14px!important;
+  border-radius:14px!important;
   overflow:hidden!important;
 }
 </style>
@@ -196,7 +196,7 @@ body.is-embed .stage{
 <body data-mode="play" data-dirty="0">
 <div id="app">
 <header class="topbar">
-  <div class="brand"><div class="brandMark">⌂</div><div><b>MY HOME · OUTDOOR</b><small>WORLD MAP · v220</small></div></div>
+  <div class="brand"><div class="brandMark">⌂</div><div><b>MY HOME · OUTDOOR</b><small>WORLD MAP · v221</small></div></div>
   <div class="spacer"></div>
   <button class="topBtn active" id="playBtn">PLAY</button>
   <button class="topBtn edit" id="editBtn">EDIT</button>
