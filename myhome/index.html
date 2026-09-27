@@ -192,11 +192,25 @@ body.is-embed .stage{
   overflow:hidden!important;
 }
 </style>
+
+<style id="v223-visible-chrome-unify">
+/* The line users see is inside this iframe, not the parent host. */
+body.is-embed .topbar,
+.topbar{
+  background:var(--paper)!important;
+  border-bottom:0!important;
+  box-shadow:none!important;
+}
+body.is-embed #app{background:var(--paper)!important}
+/* No extra edge/shadow between toolbar and world. */
+body.is-embed .stage{border-top:0!important;box-shadow:none!important}
+</style>
+
 </head>
 <body data-mode="play" data-dirty="0">
 <div id="app">
 <header class="topbar">
-  <div class="brand"><div class="brandMark">⌂</div><div><b>MY HOME · OUTDOOR</b><small>WORLD MAP · v221</small></div></div>
+  <div class="brand"><div class="brandMark">⌂</div><div><b>MY HOME · OUTDOOR</b><small>WORLD MAP · v223</small></div></div>
   <div class="spacer"></div>
   <button class="topBtn active" id="playBtn">PLAY</button>
   <button class="topBtn edit" id="editBtn">EDIT</button>
