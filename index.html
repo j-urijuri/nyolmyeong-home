@@ -6532,6 +6532,90 @@ body[data-skin] :is(.auPickerBtn,.settingsBtn,.studioEntry),.auPickerBtn,.settin
 }
 </style>
 
+
+<style id="v222-window-polish">
+/* v222 — subtle window polish / tighter visual consistency */
+:root{
+  --ui-window-bg: color-mix(in srgb,var(--theme-surface) 96%,var(--theme-home) 4%);
+  --ui-window-border: color-mix(in srgb,var(--theme-line) 76%,var(--theme-ink) 10%);
+  --ui-window-softline: color-mix(in srgb,var(--theme-line) 42%,transparent);
+  --ui-window-shell: color-mix(in srgb,var(--theme-surface) 88%,var(--theme-shell) 12%);
+  --ui-float-gap: 6px;
+}
+
+/* floating windows: unify shell color + border pressure */
+.settingsPanel,
+.auMenu,
+.topUpdatePanel,
+.studioLoginCard,
+#nyolConsoleShell #content.homeFill .myhomeEmbedHead{
+  background:var(--ui-window-bg)!important;
+  border-color:var(--ui-window-border)!important;
+}
+
+.settingsHead,
+.topUpdatePanelHead,
+#nyolConsoleShell #content.homeFill .myhomeEmbedHead{
+  background:var(--ui-window-bg)!important;
+  border-bottom:1px solid var(--ui-window-softline)!important;
+}
+
+/* soften the seam that felt slightly harsh */
+#nyolConsoleShell #content.homeFill .myhomeEmbedHead{
+  box-shadow: inset 0 -1px 0 color-mix(in srgb,var(--theme-line) 34%,transparent)!important;
+}
+#nyolConsoleShell #content.homeFill .myhomeEmbedFrameWrap{
+  background:var(--ui-window-shell)!important;
+}
+
+/* make MyHome host frame tone match the other panels more closely */
+#nyolConsoleShell #content.homeFill .myhomeEmbedShell,
+#nyolConsoleShell #content.homeFill .myhomeEmbedCard{
+  background:transparent!important;
+}
+
+/* consistent popup/dropdown spacing */
+.auPicker{position:relative}
+.auMenu{
+  top:calc(100% + var(--ui-float-gap))!important;
+  left:0!important;
+  padding:6px!important;
+  border-radius:14px!important;
+  box-shadow:0 14px 34px color-mix(in srgb,var(--theme-ink) 10%,transparent), inset 0 1px 0 color-mix(in srgb,#fff 58%,transparent)!important;
+}
+.settingsPanel{
+  top:calc(42px + var(--ui-float-gap))!important;
+  right:18px!important;
+}
+.topUpdatePanel{
+  top:calc(29px + var(--ui-float-gap))!important;
+}
+
+/* equalize internal spacing so dropdown/window gaps feel from same system */
+.auMenu button{min-height:27px!important;padding:0 10px!important}
+.settingsBody{padding:5px 10px 9px!important}
+.settingBlock{padding:6px 0!important}
+.topUpdatePanelHead{padding:0 11px!important}
+.topUpdateList{padding:6px!important}
+.topUpdateRow{border-radius:11px!important}
+
+/* base/au2 light mode: remove slightly yellower cast mismatch */
+body:not([data-au="au1"]) .settingsPanel,
+body:not([data-au="au1"]) .auMenu,
+body:not([data-au="au1"]) .topUpdatePanel,
+body:not([data-au="au1"]) .studioLoginCard,
+body:not([data-au="au1"]) #nyolConsoleShell #content.homeFill .myhomeEmbedHead{
+  background:color-mix(in srgb,#fffdfa 84%,var(--theme-shell) 16%)!important;
+}
+body[data-au="au1"] .settingsPanel,
+body[data-au="au1"] .auMenu,
+body[data-au="au1"] .topUpdatePanel,
+body[data-au="au1"] .studioLoginCard,
+body[data-au="au1"] #nyolConsoleShell #content.homeFill .myhomeEmbedHead{
+  background:color-mix(in srgb,#161214 82%,var(--theme-shell) 18%)!important;
+}
+</style>
+
 </head>
 <body data-wall="plain" data-skin="cream" data-au="base">
 <div id="viewport">
