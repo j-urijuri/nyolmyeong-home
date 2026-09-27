@@ -1,0 +1,13 @@
+v178 staged kitchen modular assets
+
+These files are copied into:
+myhome/assets/3d/interior/kitchen/
+
+They are intentionally NOT placed in home.html yet.
+They are ready for the next interior layout pass.
+
+Expected use:
+- wall_tiles_kitchen_* : modular tiled kitchen walls
+- wall_plain_kitchen_* : plain wall window variants
+- window_*_modular     : matching window modules
+- wall_shelf_kitchen*  : shelves / hooks / decorated shelf

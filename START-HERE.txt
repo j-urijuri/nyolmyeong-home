@@ -1,0 +1,27 @@
+V207 — GITHUB PAGES TEST BUILD
+
+IMPORTANT
+The ROOT index.html is the FULL HOMEPAGE.
+myhome/index.html is the MyHome game loaded INSIDE the homepage.
+
+UPLOAD
+1. Extract this ZIP.
+2. Open the extracted folder.
+3. Upload EVERYTHING you see there to the ROOT of the GitHub repository.
+
+Correct repository root should show:
+- index.html          <- FULL HOMEPAGE
+- myhome/             <- MyHome lives inside here
+- sessions/
+- README-GITHUB-PAGES.txt
+- START-HERE.txt
+
+If GitHub root shows assets/, character01.glb, or a MyHome index.html without the myhome/ folder, you uploaded the contents of the wrong folder.
+
+PERFORMANCE
+The public MyHome page no longer loads FBX files one-by-one.
+It uses a self-contained runtime, so GitHub Pages should open much faster.
+The old FBX runtime is preserved only as myhome/runtime-fbx-source.html for later development.
+
+LATER
+For the final production build, the editable 3D source assets should be converted/bundled to GLB rather than loading FBX directly.

@@ -1,0 +1,549 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>NYOL MY HOME · INTERIOR · v189</title>
+<script type="importmap">
+{"imports":{
+  "three":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js",
+  "three/addons/":"https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"
+}}
+</script>
+<style>
+:root{
+  --ink:#514047;--muted:#8b747d;--cream:#fffaf5;--paper:#fff7f3;
+  --pink:#eeb8c5;--pink2:#f7dce4;--mint:#b9d9cd;--sage:#a9bea2;
+  --wood:#c89978;--line:#d9c4c7;--shadow:rgba(80,57,64,.13);
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{font-family:ui-rounded,"Pretendard","Noto Sans KR",system-ui,sans-serif;background:#f4e9e8;color:var(--ink);overflow:hidden}
+button{font:inherit;color:inherit}
+button:focus-visible{outline:3px solid rgba(217,126,151,.35);outline-offset:2px}
+#app{height:100%;display:grid;grid-template-rows:auto 1fr auto;background:linear-gradient(145deg,#fff7f3,#f0e5e4)}
+.topbar{height:52px;display:flex;align-items:center;gap:9px;padding:8px 12px;background:rgba(255,250,247,.96);border-bottom:1px solid var(--line);box-shadow:0 5px 18px rgba(81,64,71,.06);z-index:20}
+.brand{display:flex;align-items:center;gap:9px;min-width:0}
+.brandMark{width:30px;height:30px;border-radius:11px;background:linear-gradient(135deg,#f4c1cd,#efd49d);display:grid;place-items:center;border:1px solid rgba(92,65,71,.13);box-shadow:inset 0 0 0 4px rgba(255,255,255,.35);font-size:14px}
+.brandText{line-height:1.04}.brandText b{display:block;font-size:13px;letter-spacing:.08em}.brandText small{font-size:8px;color:var(--muted);letter-spacing:.12em}
+.topSpacer{flex:1}
+.pill{border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 10px;font-size:9px;font-weight:800;letter-spacing:.05em;cursor:pointer}
+.pill.active{background:#59474d;color:#fff;border-color:#59474d}
+.pill.edit.active{background:#c8758d;border-color:#c8758d}
+.fullBtn{width:32px;height:32px;border:1px solid var(--line);border-radius:10px;background:#fff;cursor:pointer}
+.stageWrap{position:relative;min-height:0;overflow:hidden;background:#f3e8dc}
+#scene{display:block;width:100%;height:100%;touch-action:none}
+.stageVignette{display:none}
+.loading{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);min-width:210px;padding:16px 18px;border-radius:18px;text-align:center;background:rgba(255,250,247,.94);border:1px solid var(--line);box-shadow:0 15px 40px var(--shadow);font-size:11px;font-weight:900;letter-spacing:.05em;z-index:12}
+.loading small{display:block;margin-top:5px;font-size:8px;color:var(--muted);font-weight:600}
+.modeBadge{position:absolute;left:12px;top:12px;padding:7px 10px;border-radius:10px;background:rgba(255,250,247,.9);border:1px solid rgba(118,89,97,.15);font-size:8px;font-weight:900;letter-spacing:.12em;z-index:8;backdrop-filter:blur(8px)}
+.modeBadge.edit{background:rgba(198,111,137,.92);color:#fff}
+.help{position:absolute;right:12px;top:12px;max-width:230px;padding:7px 9px;border-radius:10px;background:rgba(255,250,247,.88);border:1px solid rgba(118,89,97,.15);font-size:8px;color:#765f68;z-index:8;backdrop-filter:blur(8px)}
+.toast{position:absolute;left:50%;bottom:15px;transform:translate(-50%,10px);opacity:0;pointer-events:none;padding:8px 12px;border-radius:999px;background:rgba(69,52,58,.91);color:#fff;font-size:9px;font-weight:800;transition:.2s;z-index:15}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.playHud{position:absolute;left:12px;bottom:12px;display:flex;gap:7px;z-index:8}
+.hudCard{padding:8px 10px;border:1px solid rgba(118,89,97,.14);background:rgba(255,250,247,.9);border-radius:12px;box-shadow:0 8px 25px rgba(81,64,71,.06);backdrop-filter:blur(8px);font-size:8px}
+.hudCard b{display:block;font-size:9px;margin-bottom:2px}
+.hudCard span{color:var(--muted)}
+.editHud{display:none;position:absolute;left:12px;right:12px;bottom:12px;z-index:10;padding:10px;border-radius:16px;background:rgba(255,250,247,.95);border:1px solid var(--line);box-shadow:0 14px 38px rgba(81,64,71,.13);backdrop-filter:blur(12px)}
+body[data-mode="edit"] .editHud{display:block}
+body[data-mode="edit"] .playHud{display:none}
+.editRow{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.editRow + .editRow{margin-top:7px}
+.editTitle{font-size:9px;font-weight:900;margin-right:3px;letter-spacing:.04em}
+.furnChip{border:1px solid var(--line);background:#fff;border-radius:10px;padding:6px 8px;font-size:8px;font-weight:800;cursor:pointer}
+.furnChip.active{background:#f4d3dc;border-color:#d990a5}
+.iconBtn{min-width:34px;height:29px;border:1px solid var(--line);background:#fff;border-radius:9px;cursor:pointer;font-weight:900}
+.actionBtn{border:0;border-radius:10px;padding:7px 10px;font-size:8px;font-weight:900;cursor:pointer}
+.actionBtn.save{background:#5f8775;color:#fff}.actionBtn.cancel{background:#eee1e2}.actionBtn.reset{background:#f2c9d3}
+.coord{margin-left:auto;font:700 8px ui-monospace,SFMono-Regular,monospace;color:#806b72}
+.bottomInfo{min-height:34px;display:flex;align-items:center;gap:9px;padding:7px 12px;background:rgba(255,250,247,.97);border-top:1px solid var(--line);font-size:8px}
+.dot{width:7px;height:7px;border-radius:50%;background:#7ea88d;box-shadow:0 0 0 3px rgba(126,168,141,.14)}
+.bottomInfo strong{font-size:9px}.bottomInfo span{color:var(--muted)}
+.bottomSpacer{flex:1}
+.unsaved{display:none;color:#b45d77!important;font-weight:900}body[data-dirty="1"] .unsaved{display:inline}
+@media(max-width:650px){
+ .brandText small,.help{display:none}.topbar{height:48px;padding:7px 8px}.pill{padding:6px 8px}
+ .editHud{left:7px;right:7px;bottom:7px}.coord{width:100%;margin-left:0}.bottomInfo{padding:6px 8px}
+}
+
+body.is-embed #app{grid-template-rows:1fr}
+body.is-embed .topbar,body.is-embed .bottomInfo{display:none}
+body.is-embed .stageWrap{height:100vh}
+
+.iconBtn[data-nudge]{display:none}
+body.is-embed .bottomBar{display:none!important}
+body.is-embed .topbar{display:flex!important;height:42px!important;padding:5px 8px!important;gap:5px!important}
+body.is-embed .brand small{display:none!important}
+body.is-embed .topBtn{padding:5px 7px!important;font-size:7px!important}
+</style>
+</head>
+<body data-mode="play" data-dirty="0">
+<div id="app">
+  <header class="topbar">
+    <div class="brand"><div class="brandMark">⌂</div><div class="brandText"><b>MY HOME</b><small>HOME INTERIOR</small></div></div>
+    <div class="topSpacer"></div>
+    <button class="pill active" id="playModeBtn">PLAY</button>
+    <button class="pill edit" id="editModeBtn">EDIT</button>
+    <button class="pill" id="outsideBtn">OUTSIDE</button><button class="fullBtn" id="fullBtn" title="fullscreen">⛶</button>
+  </header>
+
+  <main class="stageWrap" id="stageWrap">
+    <canvas id="scene"></canvas>
+    <div class="stageVignette"></div>
+    <div class="loading" id="loading">MY HOME LOADING…<small>character · furniture · room</small></div>
+    <div class="modeBadge" id="modeBadge">PLAY MODE</div>
+    <div class="help" id="help">바닥 클릭 이동 · 드래그 방 카메라 회전 · 휠 줌 · EDIT 직접 배치</div>
+    <div class="playHud">
+      <div class="hudCard"><b>CHARACTER 01</b><span id="animState">IDLE · animation slot</span></div>
+      <div class="hudCard"><b>EXPRESSION</b><span id="faceState">TEXTURE SLOT · neutral</span></div>
+    </div>
+    <div class="editHud" id="editHud">
+      <div class="editRow">
+        <span class="editTitle">FURNITURE</span>
+        <button class="furnChip active" data-furn="bed">BED</button>
+        <button class="furnChip" data-furn="table">TABLE</button>
+        <button class="furnChip" data-furn="library">BOOKCASE</button>
+        <button class="furnChip" data-furn="stool">STOOL</button>
+        <span class="coord" id="coord">BED · X 1.40 / Z -1.00 / 0°</span>
+      </div>
+      <div class="editRow">
+        <button class="iconBtn" data-nudge="0,-1">↑</button>
+        <button class="iconBtn" data-nudge="-1,0">←</button>
+        <button class="iconBtn" data-nudge="0,1">↓</button>
+        <button class="iconBtn" data-nudge="1,0">→</button>
+        <button class="iconBtn" id="rotateL">↺</button>
+        <button class="iconBtn" id="rotateR">↻</button>
+        <button class="actionBtn reset" id="resetOne">선택 초기화</button>
+        <div class="bottomSpacer"></div>
+        <button class="actionBtn cancel" id="cancelEdit">취소</button>
+        <button class="actionBtn save" id="saveEdit">저장</button>
+      </div>
+    </div>
+    <div class="toast" id="toast"></div>
+  </main>
+
+  <footer class="bottomInfo">
+    <i class="dot"></i><strong id="auLabel">BASE</strong>
+    <span>플레이와 꾸미기가 같은 3D 씬을 사용합니다.</span>
+    <span class="unsaved">● 저장하지 않은 변경사항</span>
+    <div class="bottomSpacer"></div>
+    <span id="assetStatus">ASSETS · loading</span>
+  </footer>
+</div>
+
+<script type="module">
+import * as THREE from 'three';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import {FBXLoader} from 'three/addons/loaders/FBXLoader.js';
+
+const qs=new URLSearchParams(location.search);
+const EMBED=qs.get('embed')==='1';if(EMBED)document.body.classList.add('is-embed');
+const AU=qs.get('au')||'base';
+const START_MODE=(qs.get('mode')==='edit')?'edit':'play';
+const STORE_KEY=`nyol:myhome:${AU}:layout:v1`;
+const SNAP=.20;
+const ROOM={minX:-2.35,maxX:2.35,minZ:-1.65,maxZ:1.72};
+
+const DEFAULTS={
+ bed:{x:1.30,z:-1.03,ry:0},
+ table:{x:-.18,z:.18,ry:0},
+ library:{x:-1.67,z:-1.03,ry:0},
+ stool:{x:-1.02,z:.82,ry:0}
+};
+const SPECS={
+ bed:{url:'./assets/3d/furniture/simple_double_bed.fbx',target:1.32,yScale:1,label:'BED'},
+ table:{url:'./assets/3d/furniture/simple_rect_table_A.fbx',target:.72,yScale:.33,label:'TABLE'},
+ library:{url:'./assets/3d/furniture/simple_library_A.fbx',target:1.18,yScale:1,label:'BOOKCASE'},
+ stool:{url:'./assets/3d/furniture/simple_footstool.fbx',target:.36,yScale:.82,label:'STOOL'}
+};
+
+const state={
+ mode:'play',dirty:false,selected:'bed',objects:{},bounds:{},keys:new Set(),
+ target:null,char:null,charVisual:null,mixer:null,actions:{},activeAction:'',
+ faceMaterial:null,dragKey:null,editSnapshot:null,last:performance.now(),walkPhase:0,cameraYaw:.68,cameraPitch:.60,cameraDistance:7.25,cameraDrag:false,pointerId:null,lastPX:0,lastPY:0,pointerMoved:false,exitDoor:null,exitDoorHit:null,exitPending:false
+};
+const canvas=document.getElementById('scene');
+const stage=document.getElementById('stageWrap');
+const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false,powerPreference:'low-power'});
+renderer.outputColorSpace=THREE.SRGBColorSpace;
+renderer.setPixelRatio(Math.min(devicePixelRatio||1,1.5));
+const scene=new THREE.Scene();
+scene.background=new THREE.Color(0xf2e9e2);
+const camera=new THREE.PerspectiveCamera(32,1,.01,100);
+camera.position.set(4.75,4.35,6.15);
+camera.lookAt(0,.38,0);
+function updateCamera(){
+ const y=state.cameraYaw,p=state.cameraPitch,d=state.cameraDistance;
+ const cp=Math.cos(p),sp=Math.sin(p),target=new THREE.Vector3(0,.50,.10);
+ camera.position.set(target.x+Math.sin(y)*cp*d,target.y+sp*d,target.z+Math.cos(y)*cp*d);
+ camera.lookAt(target);
+}
+function resetCamera(){
+ state.cameraYaw=.68;state.cameraPitch=.60;state.cameraDistance=7.25;updateCamera();
+ toast('카메라 기본 앵글');
+}
+
+
+
+function currentWindowSky(){
+ const q=new URLSearchParams(location.search).get('sky');
+ const h=new Date().getHours();
+ const phase=(q&&['dawn','day','sunset','night'].includes(q))?q:
+   (h>=5&&h<7?'dawn':h>=7&&h<17?'day':h>=17&&h<20?'sunset':'night');
+ return {
+   dawn:0xe7bcb1,
+   day:0xc3dcd4,
+   sunset:0xe7aaa0,
+   night:0x52617c
+ }[phase];
+}
+const WINDOW_SKY=currentWindowSky();
+
+function basicMat(color){return new THREE.MeshBasicMaterial({color,side:THREE.DoubleSide})}
+function box(w,h,d,color,x,y,z){
+ const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),basicMat(color));m.position.set(x,y,z);scene.add(m);return m;
+}
+const floor=new THREE.Mesh(new THREE.PlaneGeometry(5.4,4.15),basicMat(0xe8d3c3));
+floor.rotation.x=-Math.PI/2;floor.position.set(0,0,0);floor.name='floor';scene.add(floor);
+box(5.4,2.2,.08,0xf7eee9,0,1.1,-2.04);
+box(.08,2.2,4.1,0xf4e6e2,-2.66,1.1,0);
+const baseboard=box(5.4,.10,.11,0xcda98f,0,.06,-1.99);
+box(.11,.10,4.1,0xcda98f,-2.61,.06,0);
+
+const rug=new THREE.Mesh(new THREE.CircleGeometry(1.26,56),basicMat(0xf2d8df));
+rug.rotation.x=-Math.PI/2;rug.position.set(.18,.008,.38);rug.scale.set(1.25,.72,1);scene.add(rug);
+
+// Simple decorative window / wall frames so the room still reads before 3D assets finish loading.
+box(1.26,.88,.035,WINDOW_SKY,-.65,1.28,-1.985);
+box(.055,.88,.045,0xaa8e7b,-1.27,1.28,-1.96);box(.055,.88,.045,0xaa8e7b,-.03,1.28,-1.96);
+box(1.26,.055,.045,0xaa8e7b,-.65,1.70,-1.96);box(1.26,.055,.045,0xaa8e7b,-.65,.86,-1.96);
+box(.055,.82,.045,0xaa8e7b,-.65,1.28,-1.96);
+// v189: a visible room door + second window. These are world objects, not UI-only exits.
+const exitDoor=new THREE.Group();
+const doorLeaf=new THREE.Mesh(new THREE.BoxGeometry(.88,1.86,.055),basicMat(0xc9958d));
+doorLeaf.position.set(1.78,.93,-1.955);exitDoor.add(doorLeaf);
+const doorInset=new THREE.Mesh(new THREE.BoxGeometry(.70,1.62,.020),basicMat(0xd9aaa0));
+doorInset.position.set(1.78,.93,-1.920);exitDoor.add(doorInset);
+const knob=new THREE.Mesh(new THREE.SphereGeometry(.045,12,8),basicMat(0x7b6556));
+knob.position.set(2.07,.90,-1.875);exitDoor.add(knob);
+outline(exitDoor,'#725962',.34,1.008);
+scene.add(exitDoor);
+state.exitDoor=exitDoor;
+const exitDoorHit=new THREE.Mesh(
+  new THREE.BoxGeometry(1.12,2.02,.34),
+  new THREE.MeshBasicMaterial({transparent:true,opacity:0,depthWrite:false})
+);
+exitDoorHit.position.set(1.78,1.0,-1.90);
+scene.add(exitDoorHit);
+state.exitDoorHit=exitDoorHit;
+
+// second window on the left wall
+box(.035,.84,1.22,WINDOW_SKY,-2.615,1.29,.38);
+box(.045,.88,.055,0xaa8e7b,-2.585,1.29,-.24);
+box(.045,.88,.055,0xaa8e7b,-2.585,1.29,1.00);
+box(.045,.055,1.24,0xaa8e7b,-2.585,1.70,.38);
+box(.045,.055,1.24,0xaa8e7b,-2.585,.88,.38);
+box(.045,.82,.055,0xaa8e7b,-2.585,1.29,.38);
+
+
+const grid=new THREE.GridHelper(4.8,24,0xcaa9b3,0xe6d4d8);
+grid.position.y=.012;grid.material.transparent=true;grid.material.opacity=.34;grid.visible=false;scene.add(grid);
+
+const selectBox=new THREE.BoxHelper(new THREE.Object3D(),0xc56f8a);
+selectBox.material.depthTest=false;selectBox.renderOrder=30;selectBox.visible=false;scene.add(selectBox);
+
+function flatten(obj){
+ obj.traverse(n=>{
+   if(!n.isMesh)return;
+   const list=Array.isArray(n.material)?n.material:[n.material];
+   const next=list.filter(Boolean).map(mat=>{
+     let c=(mat.color&&mat.color.clone())||new THREE.Color('#ead8d3');
+     const hsl={h:0,s:0,l:0};c.getHSL(hsl);
+     c.setHSL(hsl.h,Math.min(1,hsl.s*1.06),Math.min(1,hsl.l*1.035));
+     return new THREE.MeshBasicMaterial({color:c,map:mat.map||null,transparent:!!mat.transparent,opacity:mat.opacity??1,alphaTest:mat.alphaTest||0,side:mat.side});
+   });
+   n.material=Array.isArray(n.material)?next:next[0];
+ });
+}
+function outline(obj,color='#725962',opacity=.34,inflate=1.009){
+ const meshes=[];obj.traverse(n=>{if(n.isMesh&&!n.userData.outlineShell)meshes.push(n)});
+ meshes.forEach(m=>{
+   const shell=new THREE.Mesh(m.geometry,new THREE.MeshBasicMaterial({color,side:THREE.BackSide,transparent:true,opacity,depthWrite:false}));
+   shell.scale.setScalar(inflate);shell.userData.outlineShell=true;m.add(shell);
+ });
+}
+function normalize(obj,target,yScale=1){
+ let b=new THREE.Box3().setFromObject(obj),s=b.getSize(new THREE.Vector3());
+ obj.scale.multiplyScalar(target/(Math.max(s.x,s.y,s.z)||1));obj.scale.y*=yScale;
+ b=new THREE.Box3().setFromObject(obj);const c=b.getCenter(new THREE.Vector3());
+ obj.position.x-=c.x;obj.position.z-=c.z;obj.position.y-=b.min.y;
+}
+function layoutFromStorage(){
+ try{
+   const raw=JSON.parse(localStorage.getItem(STORE_KEY)||'null');
+   if(raw&&raw.furniture)return raw.furniture;
+ }catch(_){}
+ return JSON.parse(JSON.stringify(DEFAULTS));
+}
+let layout=layoutFromStorage();
+
+function snap(v){return Math.round(v/SNAP)*SNAP}
+function clampFurniture(k){
+ const o=layout[k];o.x=Math.max(ROOM.minX+.12,Math.min(ROOM.maxX-.12,o.x));o.z=Math.max(ROOM.minZ+.12,Math.min(ROOM.maxZ-.12,o.z));
+}
+function applyFurniture(k){
+ const root=state.objects[k];if(!root)return;
+ clampFurniture(k);const f=layout[k];root.position.set(f.x,0,f.z);root.rotation.y=THREE.MathUtils.degToRad(f.ry||0);root.updateMatrixWorld(true);
+ state.bounds[k]=new THREE.Box3().setFromObject(root);
+ if(state.selected===k)updateSelection();
+ updateCoord();
+}
+function updateSelection(){
+ const root=state.objects[state.selected];
+ if(!root){selectBox.visible=false;return}
+ selectBox.setFromObject(root);selectBox.visible=state.mode==='edit';
+}
+function updateCoord(){
+ const c=document.getElementById('coord'),f=layout[state.selected];if(!c||!f)return;
+ c.textContent=`${SPECS[state.selected].label} · X ${f.x.toFixed(2)} / Z ${f.z.toFixed(2)} / ${Math.round(f.ry||0)}°`;
+ document.querySelectorAll('.furnChip').forEach(b=>b.classList.toggle('active',b.dataset.furn===state.selected));
+}
+function setDirty(v=true){
+ state.dirty=!!v;document.body.dataset.dirty=state.dirty?'1':'0';
+}
+function saveLayout(){
+ localStorage.setItem(STORE_KEY,JSON.stringify({version:1,furniture:layout}));
+ state.editSnapshot=JSON.parse(JSON.stringify(layout));setDirty(false);toast('마이홈 배치를 저장했어요');
+ parent.postMessage({source:'nyol-myhome',type:'saved',au:AU,layout},'*');
+}
+function restoreSnapshot(snapshot){
+ layout=JSON.parse(JSON.stringify(snapshot||DEFAULTS));Object.keys(layout).forEach(applyFurniture);setDirty(false);
+}
+function resetSelected(){
+ layout[state.selected]=JSON.parse(JSON.stringify(DEFAULTS[state.selected]));applyFurniture(state.selected);setDirty();
+}
+function nudge(dx,dz){
+ const f=layout[state.selected];if(!f)return;f.x=snap(f.x+dx*SNAP);f.z=snap(f.z+dz*SNAP);applyFurniture(state.selected);setDirty();
+}
+function rotate(dir){
+ const f=layout[state.selected];if(!f)return;f.ry=((Math.round((f.ry||0)/90)*90)+(dir>0?90:-90));while(f.ry>180)f.ry-=360;while(f.ry<=-180)f.ry+=360;applyFurniture(state.selected);setDirty();
+}
+function selectFurniture(k){if(!state.objects[k]){state.selected=k;updateCoord();return}state.selected=k;updateSelection();updateCoord()}
+
+async function loadFurniture(){
+ let ok=0;
+ for(const [k,spec] of Object.entries(SPECS)){
+   try{
+     const obj=await new Promise((resolve,reject)=>new FBXLoader().load(spec.url,resolve,undefined,reject));
+     flatten(obj);outline(obj,'#927980',.28,1.007);normalize(obj,spec.target,spec.yScale);
+     const root=new THREE.Group();root.userData.furnitureKey=k;root.add(obj);scene.add(root);state.objects[k]=root;applyFurniture(k);ok++;
+   }catch(e){console.warn('Furniture failed',k,e)}
+ }
+ return ok;
+}
+function findClip(name){
+ const n=name.toLowerCase();
+ return Object.entries(state.actions).find(([key])=>key.includes(n))?.[1]||null;
+}
+function playAction(name){
+ if(!state.mixer)return;
+ const next=findClip(name)||findClip('idle');if(!next)return;
+ if(state.activeAction===next)return;
+ if(state.activeAction)state.activeAction.fadeOut(.15);
+ next.reset().fadeIn(.15).play();state.activeAction=next;
+ document.getElementById('animState').textContent=`${name.toUpperCase()} · GLB clip`;
+}
+async function loadCharacter(){
+ return new Promise((resolve)=>{
+  new GLTFLoader().load('./assets/3d/character01.glb',gltf=>{
+    const root=new THREE.Group(),visual=new THREE.Group(),model=gltf.scene;
+    flatten(model);outline(model,'#3b2d33',.82,1.015);
+    visual.add(model);root.add(visual);scene.add(root);
+    let b=new THREE.Box3().setFromObject(model),s=b.getSize(new THREE.Vector3()),c=b.getCenter(new THREE.Vector3());
+    model.position.sub(c);const scale=1.10/(s.y||1);model.scale.setScalar(scale);
+    b=new THREE.Box3().setFromObject(model);model.position.y-=b.min.y;
+    visual.rotation.y=Math.PI;root.position.set(.15,0,1.12);
+    state.char=root;state.charVisual=visual;
+    if(gltf.animations?.length){
+      state.mixer=new THREE.AnimationMixer(model);
+      gltf.animations.forEach(cl=>state.actions[cl.name.toLowerCase()]=state.mixer.clipAction(cl));
+      playAction('idle');
+    }else{
+      document.getElementById('animState').textContent='IDLE · 리깅/애니메이션 연결 예정';
+    }
+    model.traverse(n=>{
+      const mats=Array.isArray(n.material)?n.material:[n.material];
+      mats.filter(Boolean).forEach(m=>{if((m.name||'').toLowerCase().includes('face'))state.faceMaterial=m});
+    });
+    resolve(true);
+  },undefined,e=>{console.warn('Character failed',e);resolve(false)});
+ });
+}
+function isBlocked(x,z){
+ if(x<ROOM.minX+.16||x>ROOM.maxX-.16||z<ROOM.minZ+.16||z>ROOM.maxZ-.16)return true;
+ const pad=.16;
+ return Object.values(state.bounds).some(b=>x>b.min.x-pad&&x<b.max.x+pad&&z>b.min.z-pad&&z<b.max.z+pad);
+}
+function moveCharacter(dx,dz,dt){
+ if(!state.char||state.mode!=='play')return false;
+ const len=Math.hypot(dx,dz);if(!len)return false;dx/=len;dz/=len;
+ const speed=1.18,step=speed*dt;let moved=false;
+ let nx=state.char.position.x+dx*step,nz=state.char.position.z;
+ if(!isBlocked(nx,nz)){state.char.position.x=nx;moved=true}
+ nx=state.char.position.x;nz=state.char.position.z+dz*step;
+ if(!isBlocked(nx,nz)){state.char.position.z=nz;moved=true}
+ if(moved){state.char.rotation.y=Math.atan2(dx,dz);state.walkPhase+=dt*10;playAction('walk')}
+ return moved;
+}
+function updateMovement(dt){
+ if(!state.char||state.mode!=='play')return;
+ let dx=0,dz=0;
+ if(state.keys.has('left'))dx-=1;if(state.keys.has('right'))dx+=1;if(state.keys.has('up'))dz-=1;if(state.keys.has('down'))dz+=1;
+ if(state.target&&!dx&&!dz){
+   const vx=state.target.x-state.char.position.x,vz=state.target.z-state.char.position.z,d=Math.hypot(vx,vz);
+   if(d<.06){
+     state.target=null;
+     if(state.exitPending){
+       state.exitPending=false;
+       document.body.style.opacity='.35';
+       setTimeout(()=>{location.href='./index.html?au='+encodeURIComponent(AU)+'&mode=play'},150);
+     }
+   }else{dx=vx;dz=vz}
+ }
+ const moving=moveCharacter(dx,dz,dt);
+ if(!moving){
+   if(state.activeAction&&findClip('idle')!==state.activeAction)playAction('idle');
+   if(!state.mixer&&state.charVisual){state.charVisual.position.y*=.75}
+ }else if(!state.mixer&&state.charVisual){
+   state.charVisual.position.y=Math.abs(Math.sin(state.walkPhase))*.035;
+   state.charVisual.rotation.z=Math.sin(state.walkPhase*.5)*.018;
+ }
+ if(!moving&&!state.mixer&&state.charVisual)state.charVisual.rotation.z*=.8;
+}
+function toast(msg){
+ const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove('show'),1400);
+}
+async function setExpression(name){
+ if(!state.faceMaterial){toast('FACE 재질 이름을 연결하면 표정 텍스처 교체가 활성화돼요');return}
+ const url=`./assets/3d/faces/${name}.png`;
+ try{
+   const tex=await new THREE.TextureLoader().loadAsync(url);tex.colorSpace=THREE.SRGBColorSpace;state.faceMaterial.map=tex;state.faceMaterial.needsUpdate=true;
+   document.getElementById('faceState').textContent=`TEXTURE · ${name}`;
+ }catch(_){toast(`${name} 표정 텍스처 파일이 아직 없어요`)}
+}
+function setMode(mode,force=false){
+ if(mode==='play'&&state.mode==='edit'&&state.dirty&&!force){
+   if(!confirm('저장하지 않은 배치를 취소하고 PLAY로 돌아갈까요?'))return;
+   restoreSnapshot(state.editSnapshot);
+ }
+ state.mode=mode;document.body.dataset.mode=mode;grid.visible=mode==='edit';selectBox.visible=mode==='edit'&&!!state.objects[state.selected];
+ document.getElementById('playModeBtn').classList.toggle('active',mode==='play');
+ document.getElementById('editModeBtn').classList.toggle('active',mode==='edit');
+ const badge=document.getElementById('modeBadge');badge.textContent=mode==='edit'?'EDIT MODE · ROOM DECOR':'PLAY MODE';badge.classList.toggle('edit',mode==='edit');
+ document.getElementById('help').textContent=mode==='edit'?'가구 클릭/드래그 · 0.20 단위 스냅 · 저장/취소':'바닥 클릭 이동 · 드래그 방 카메라 회전 · 휠 줌 · GLB 애니메이션 자동 사용';
+ if(mode==='edit')state.editSnapshot=JSON.parse(JSON.stringify(layout));else state.target=null;
+ parent.postMessage({source:'nyol-myhome',type:'mode',mode,au:AU},'*');
+}
+document.getElementById('playModeBtn').onclick=()=>setMode('play');
+document.getElementById('editModeBtn').onclick=()=>setMode('edit');
+document.getElementById('outsideBtn').onclick=()=>{document.body.style.opacity='.3';setTimeout(()=>{location.href='./index.html?au='+encodeURIComponent(AU)+'&mode=play'},180)};
+document.getElementById('fullBtn').onclick=()=>document.documentElement.requestFullscreen?.();
+document.getElementById('saveEdit').onclick=()=>{saveLayout();setMode('play',true)};
+document.getElementById('cancelEdit').onclick=()=>{restoreSnapshot(state.editSnapshot);setMode('play',true);toast('편집 전 배치로 돌아왔어요')};
+document.getElementById('resetOne').onclick=resetSelected;
+document.getElementById('rotateL').onclick=()=>rotate(-1);document.getElementById('rotateR').onclick=()=>rotate(1);
+document.querySelectorAll('.furnChip').forEach(b=>b.onclick=()=>selectFurniture(b.dataset.furn));
+document.querySelectorAll('[data-nudge]').forEach(b=>b.onclick=()=>{const [x,z]=b.dataset.nudge.split(',').map(Number);nudge(x,z)});
+document.getElementById('auLabel').textContent=AU.toUpperCase();
+
+const ray=new THREE.Raycaster(),pointer=new THREE.Vector2(),floorPlane=new THREE.Plane(new THREE.Vector3(0,1,0),0);
+function rayAt(e){
+ const r=canvas.getBoundingClientRect();pointer.x=((e.clientX-r.left)/r.width)*2-1;pointer.y=-((e.clientY-r.top)/r.height)*2+1;ray.setFromCamera(pointer,camera);
+}
+function furnHit(e){
+ rayAt(e);const roots=Object.values(state.objects);const hits=ray.intersectObjects(roots,true);
+ if(!hits.length)return null;let o=hits[0].object;
+ while(o){if(o.userData?.furnitureKey)return o.userData.furnitureKey;o=o.parent}return null;
+}
+canvas.addEventListener('pointerdown',e=>{
+ state.pointerId=e.pointerId;state.lastPX=e.clientX;state.lastPY=e.clientY;state.pointerMoved=false;
+ if(state.mode==='edit'){
+   const k=furnHit(e);
+   if(k){selectFurniture(k);state.dragKey=k}
+   else state.cameraDrag=true;
+ }else state.cameraDrag=true;
+ try{canvas.setPointerCapture(e.pointerId)}catch(_){}
+});
+canvas.addEventListener('pointermove',e=>{
+ if(state.pointerId!==e.pointerId)return;
+ const dx=e.clientX-state.lastPX,dy=e.clientY-state.lastPY;
+ if(Math.hypot(dx,dy)>4)state.pointerMoved=true;
+ if(state.mode==='edit'&&state.dragKey){
+   rayAt(e);const p=new THREE.Vector3();
+   if(ray.ray.intersectPlane(floorPlane,p)){const f=layout[state.dragKey];f.x=snap(p.x);f.z=snap(p.z);applyFurniture(state.dragKey);setDirty()}
+ }else if(state.cameraDrag&&state.pointerMoved){
+   state.cameraYaw-=dx*.007;
+   state.cameraPitch=Math.max(.38,Math.min(1.02,state.cameraPitch-dy*.006));
+   updateCamera();
+ }
+ state.lastPX=e.clientX;state.lastPY=e.clientY;
+});
+canvas.addEventListener('pointerup',e=>{
+ const moved=state.pointerMoved;
+ const wasDrag=!!state.dragKey;
+ state.dragKey=null;state.cameraDrag=false;state.pointerId=null;
+ try{canvas.releasePointerCapture(e.pointerId)}catch(_){}
+ if(state.mode==='play'&&!moved&&!wasDrag){
+   rayAt(e);
+   if((state.exitDoorHit&&ray.intersectObject(state.exitDoorHit,true).length)||(state.exitDoor&&ray.intersectObject(state.exitDoor,true).length)){
+     state.target={x:1.72,z:-1.72};
+     state.exitPending=true;
+     toast('문으로 나갈게요');
+     return;
+   }
+   const p=new THREE.Vector3();
+   if(ray.ray.intersectPlane(floorPlane,p)){state.exitPending=false;state.target={x:p.x,z:p.z}};
+ }
+});
+canvas.addEventListener('pointercancel',()=>{state.dragKey=null;state.cameraDrag=false;state.pointerId=null});
+canvas.addEventListener('wheel',e=>{
+ e.preventDefault();state.cameraDistance=Math.max(4.8,Math.min(10.5,state.cameraDistance+Math.sign(e.deltaY)*.55));updateCamera();
+},{passive:false});
+
+const keyMap={ArrowLeft:'left',a:'left',A:'left',ArrowRight:'right',d:'right',D:'right',ArrowUp:'up',w:'up',W:'up',ArrowDown:'down',s:'down',S:'down'};
+addEventListener('keydown',e=>{const k=keyMap[e.key];if(k&&state.mode==='play'){e.preventDefault();state.keys.add(k);state.target=null}});
+addEventListener('keyup',e=>{const k=keyMap[e.key];if(k)state.keys.delete(k)});
+
+function resize(){
+ const r=stage.getBoundingClientRect(),w=Math.max(1,Math.floor(r.width)),h=Math.max(1,Math.floor(r.height));
+ renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();
+}
+addEventListener('resize',resize);resize();
+
+let loaded=0;
+Promise.all([loadCharacter().then(x=>{if(x)loaded++}),loadFurniture().then(n=>{if(n)loaded++})]).finally(()=>{
+ document.getElementById('loading').style.display='none';
+ document.getElementById('assetStatus').textContent=`ASSETS · ${Object.keys(state.objects).length} furniture · character ${state.char?'OK':'WAIT'}`;
+ updateSelection();parent.postMessage({source:'nyol-myhome',type:'ready',au:AU},'*');
+});
+
+
+window.addEventListener('message',e=>{
+ const d=e.data;if(!d||d.source!=='nyol-home-host')return;
+ if(d.action==='play')setMode('play');
+ if(d.action==='edit')setMode('edit');
+ if(d.action==='view')resetCamera();
+ if(d.action==='outside')document.getElementById('outsideBtn')?.click();
+});
+
+function tick(now){
+ const dt=Math.min(.04,(now-state.last)/1000||0);state.last=now;
+ updateMovement(dt);updateCamera();if(state.mixer)state.mixer.update(dt);if(selectBox.visible)selectBox.update();
+ renderer.render(scene,camera);requestAnimationFrame(tick);
+}
+requestAnimationFrame(tick);
+setMode(START_MODE,true);
+</script>
+</body>
+</html>

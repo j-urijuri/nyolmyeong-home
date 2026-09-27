@@ -1,0 +1,27 @@
+v206
+
+Preserved
+- v205 approved console frame, playlist proportions, MyHome map, pastel grade,
+  character outline, auto-walk, collision, lift/drag/drop are unchanged.
+
+Guestbook
+- Removed phone-device silhouette.
+- Removed back button, heart button, speaker, and phone-home decoration.
+- Guestbook is now a clean rounded message panel.
+
+Gallery
+- DETAIL button now opens metadata as a soft gradient panel rising over the image.
+- Existing gallery popup and metadata are retained.
+
+AU controls
+- AU dropdown, STUDIO, and SET buttons now use --theme-* colors.
+- They therefore change immediately with BASE / AU01 / AU02.
+- Skin CSS no longer masks their AU colors.
+
+Session
+- Prepared Roll20 HTML support.
+- Put Roll20 exports in /sessions.
+- Connect each episode in SESSION_HTML_FILES.
+- Session detail loads the connected HTML inside an iframe.
+- Permanent upload from STUDIO is intentionally not faked on GitHub Pages;
+  that needs later server/storage support.
