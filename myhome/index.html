@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>NYOL MY HOME · OUTDOOR v214</title>
+<title>NYOL MY HOME · OUTDOOR v220</title>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <script type="importmap">
 {"imports":{
@@ -167,11 +167,36 @@ body:not(.world-ready) #scene{opacity:0!important}
 body.world-ready #scene{opacity:1!important}
 #scene{transition:opacity .14s ease!important}
 </style>
+
+<style id="v220-visible-corner-fix">
+/* v220: round the ACTUAL embedded MyHome surface, not only the parent iframe wrapper. */
+body.is-embed{
+  border-radius:14px!important;
+  overflow:hidden!important;
+}
+body.is-embed #app{
+  height:100%!important;
+  border:0!important;
+  border-radius:14px!important;
+  overflow:hidden!important;
+  box-shadow:none!important;
+  background:var(--paper)!important;
+}
+body.is-embed .topbar{
+  border-radius:14px 14px 0 0!important;
+  overflow:hidden!important;
+}
+/* Keep the stage flush: no fake inner card, no highlighted gap. */
+body.is-embed .stage{
+  border-radius:0 0 14px 14px!important;
+  overflow:hidden!important;
+}
+</style>
 </head>
 <body data-mode="play" data-dirty="0">
 <div id="app">
 <header class="topbar">
-  <div class="brand"><div class="brandMark">⌂</div><div><b>MY HOME · OUTDOOR</b><small>WORLD MAP · v219</small></div></div>
+  <div class="brand"><div class="brandMark">⌂</div><div><b>MY HOME · OUTDOOR</b><small>WORLD MAP · v220</small></div></div>
   <div class="spacer"></div>
   <button class="topBtn active" id="playBtn">PLAY</button>
   <button class="topBtn edit" id="editBtn">EDIT</button>
@@ -464,7 +489,7 @@ const spec={
  foliageB:{file:'foliage_B.fbx',target:.95},
  boots:{file:'boots.fbx',target:.34},
  doormat:{file:'doormat.fbx',target:.78,outline:false},
- house:{file:'house.fbx',target:4.85},
+ house:{file:'house.fbx',target:4.85,outline:false},
  gateRight:{file:'gate_double_right.fbx',target:1.55},
  gateSingle:{file:'gate_single.fbx',target:1.05},
  mailbox:{file:'mailbox.fbx',target:.78},
