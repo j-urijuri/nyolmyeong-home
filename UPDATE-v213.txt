@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 V214 FIX
 
 - MyHome house: force real house materials fully opaque and AU-independent.
@@ -6,3 +7,21 @@ V214 FIX
 - SETTINGS: compact vertical spacing.
 - Recent updates dropdown: narrowed from 510px to 380px and rows compacted.
 - Existing walking direction and unrelated features preserved.
+=======
+NYOL v213 — FULL UI / MYHOME FIX
+
+수정됨
+- 홈페이지 전체 AU 팔레트 채도/대비 완화
+- SETTINGS / UPDATE(새글) / STUDIO LOGIN / AU 드롭다운 디자인 통일
+- MyHome 바깥 호스트 화면 둥근 모서리 복구
+- MyHome PLAY/EDIT/MAP/VIEW 조작 UI가 홈페이지 AU 색을 따라가도록 연결
+- MyHome 3D 월드 색은 AU와 분리
+- 야외 카메라 줌인 + 집 쪽 프레이밍 강화
+- house.fbx 로드 전 fallback 집 표시, 실제 모델 로드 시 자동 교체
+- house.fbx visibility/culling 보정
+- 현재 정상인 걷기 방향 유지
+- 실내 MyHome 조작 UI도 동일한 AU 규칙 적용
+
+업로드
+현재 GitHub 저장소 폴더에 이 완성본의 파일들을 덮어쓴 뒤 GitHub Desktop에서 commit/push 하면 됩니다.
+>>>>>>> f21bfa5981f0e2a7015f7400816053ab414be627
