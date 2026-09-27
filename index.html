@@ -6438,31 +6438,40 @@ body[data-skin] :is(.auPickerBtn,.settingsBtn,.studioEntry),.auPickerBtn,.settin
 .topUpdateRowAction i{min-width:48px!important;height:20px!important;padding:0 7px!important}
 </style>
 
-<style id="v217-myhome-host-seam-fix">
-/* v217: HOME is one continuous recessed screen.
-   The parent screen owns the rounded outer corners; the iframe gets no second frame/gutter. */
+<style id="v218-myhome-host-clip-fix">
+/* v218: one continuous MyHome screen. No gutter, border, or inner highlight.
+   Only the actual MyHome viewport is clipped to the original 14px corner radius. */
 #nyolConsoleShell .content:has(.myhomeEmbedShell){
   padding:0!important;
+  margin:0!important;
   background:transparent!important;
   overflow:hidden!important;
 }
 #nyolConsoleShell .content:has(.myhomeEmbedShell) .myhomeEmbedShell,
-#nyolConsoleShell .content:has(.myhomeEmbedShell) .myhomeEmbedCard,
-#nyolConsoleShell .content:has(.myhomeEmbedShell) .myhomeEmbedFrameWrap,
-#nyolConsoleShell .content:has(.myhomeEmbedShell) .myhomeEmbedFrame{
-  margin:0!important;
-  padding:0!important;
-  border:0!important;
-  box-shadow:none!important;
-  background:transparent!important;
-}
-#nyolConsoleShell .content:has(.myhomeEmbedShell) .myhomeEmbedShell,
-#nyolConsoleShell .content:has(.myhomeEmbedShell) .myhomeEmbedCard,
-#nyolConsoleShell .content:has(.myhomeEmbedShell) .myhomeEmbedFrameWrap{
+#nyolConsoleShell .content:has(.myhomeEmbedShell) .myhomeEmbedCard{
+  display:block!important;
   width:100%!important;
   height:100%!important;
   min-height:0!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
   border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  overflow:visible!important;
+}
+#nyolConsoleShell .content:has(.myhomeEmbedShell) .myhomeEmbedFrameWrap{
+  display:block!important;
+  width:100%!important;
+  height:100%!important;
+  min-height:0!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:14px!important;
+  background:transparent!important;
+  box-shadow:none!important;
   overflow:hidden!important;
 }
 #nyolConsoleShell .content:has(.myhomeEmbedShell) .myhomeEmbedFrame{
@@ -6470,7 +6479,12 @@ body[data-skin] :is(.auPickerBtn,.settingsBtn,.studioEntry),.auPickerBtn,.settin
   width:100%!important;
   height:100%!important;
   min-height:0!important;
-  border-radius:0!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:14px!important;
+  background:transparent!important;
+  box-shadow:none!important;
 }
 </style>
 </head>
@@ -10483,6 +10497,7 @@ rebuildAUControls();renderPlaylist();render();renderTopUpdateWidget();
 
   function myhomeUrl(mode,embed=true){
     const q=new URLSearchParams({au:currentAU||"base",mode:mode||"play"});
+    q.set("build","v218");
     if(embed)q.set("embed","1");
     return `${MYHOME_URL}?${q.toString()}`;
   }

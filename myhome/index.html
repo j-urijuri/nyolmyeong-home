@@ -157,7 +157,7 @@ body.is-embed #app{height:calc(100% - 2px)!important;border:1px solid var(--line
 </style>
 <style id="v214-house-opaque-fix">/* house materials are forced opaque; fallback uses the same AU-independent soft palette */</style>
 
-<style id="v217-embed-and-house-fix">
+<style id="v218-embed-and-house-fix">
 /* In embed mode the homepage screen is the only rounded frame. */
 body.is-embed{padding:0!important;background:transparent!important}
 body.is-embed #app{height:100%!important;border:0!important;border-radius:0!important;box-shadow:none!important;overflow:hidden!important}
@@ -171,7 +171,7 @@ body.world-ready #scene{opacity:1!important}
 <body data-mode="play" data-dirty="0">
 <div id="app">
 <header class="topbar">
-  <div class="brand"><div class="brandMark">⌂</div><div><b>MY HOME · OUTDOOR</b><small>WORLD MAP · v217</small></div></div>
+  <div class="brand"><div class="brandMark">⌂</div><div><b>MY HOME · OUTDOOR</b><small>WORLD MAP · v218</small></div></div>
   <div class="spacer"></div>
   <button class="topBtn active" id="playBtn">PLAY</button>
   <button class="topBtn edit" id="editBtn">EDIT</button>
@@ -392,6 +392,41 @@ function normalize(obj,target,yScale=1){
  b=new THREE.Box3().setFromObject(obj);const c=b.getCenter(new THREE.Vector3());obj.position.x-=c.x;obj.position.z-=c.z;obj.position.y-=b.min.y;
 }
 const loader=new FBXLoader();
+let housePaletteTexturePromise=null;
+async function getHousePaletteTexture(){
+ if(!housePaletteTexturePromise){
+  housePaletteTexturePromise=new THREE.TextureLoader().loadAsync('./assets/3d/outdoor/tiny_treats_texture_house_v218.png').then(t=>{
+   t.colorSpace=THREE.SRGBColorSpace;
+   t.needsUpdate=true;
+   return t;
+  });
+ }
+ return housePaletteTexturePromise;
+}
+async function applyHousePalette(obj){
+ const palette=await getHousePaletteTexture();
+ obj.traverse(n=>{
+  if(!n.isMesh)return;
+  const mats=Array.isArray(n.material)?n.material:[n.material];
+  mats.filter(Boolean).forEach(m=>{
+   if(m.map){
+    const src=m.map, t=palette.clone();
+    t.mapping=src.mapping;
+    t.wrapS=src.wrapS;t.wrapT=src.wrapT;
+    t.magFilter=src.magFilter;t.minFilter=src.minFilter;
+    t.anisotropy=src.anisotropy;
+    t.flipY=src.flipY;
+    t.offset.copy(src.offset);t.repeat.copy(src.repeat);t.center.copy(src.center);
+    t.rotation=src.rotation;
+    t.colorSpace=THREE.SRGBColorSpace;
+    t.needsUpdate=true;
+    m.map=t;
+   }
+   if(m.color)m.color.set(0xffffff);
+   m.opacity=1;m.transparent=false;m.alphaTest=0;m.depthWrite=true;m.depthTest=true;m.side=THREE.DoubleSide;m.needsUpdate=true;
+  });
+ });
+}
 const spec={
  floor:{file:'floor_base.fbx',target:8.4,outline:false},
  cobble:{file:'cobblestones.fbx',target:.92,outline:false},
@@ -446,6 +481,7 @@ async function asset(key){
      obj=await new Promise((res,rej)=>loader.load('./assets/3d/outdoor/'+sp.file,res,undefined,rej));
    }
    flatten(obj);
+   if(key==='house')await applyHousePalette(obj);
    if(sp.outline!==false)outline(obj);
    normalize(obj,sp.target,sp.yScale||1);
    cache[key]=obj;
@@ -486,16 +522,6 @@ function pathGeom(points,width,color=0xdcc3a5){
  const m=new THREE.Mesh(g,mat(color));scene.add(m);return m;
 }
 function addPlaza(x,z,r,color=0xe5ccb0){const m=new THREE.Mesh(new THREE.CircleGeometry(r,48),mat(color));m.rotation.x=-Math.PI/2;m.position.set(x,.014,z);scene.add(m);return m}
-function createHouseFallback(){
- const root=new THREE.Group();root.userData.interaction='enterHome';
- const body=mesh(new THREE.BoxGeometry(3.25,1.75,2.35),0xeee1d8);body.position.y=.88;
- const roof=mesh(new THREE.ConeGeometry(2.35,1.22,4),0xc7a5aa);roof.rotation.y=Math.PI/4;roof.scale.z=.76;roof.position.y=2.05;
- const door=mesh(new THREE.BoxGeometry(.62,1.12,.08),0xa58b82);door.position.set(0,.56,1.205);
- const w1=mesh(new THREE.BoxGeometry(.68,.56,.07),0xbccfcb);w1.position.set(-.94,1.10,1.21);
- const w2=w1.clone();w2.position.x=.94;
- root.add(body,roof,door,w1,w2);root.position.set(0,.025,-5.00);root.renderOrder=1;
- scene.add(root);state.houseFallback=root;return root;
-}
 async function buildWorld(){
  // Build the approved open field immediately; all FBX assets load in parallel.
  pathGeom([[0,12],[0,8],[.1,5],[-.1,2.3],[-.3,-.3],[-.25,-3.9]],.72);
@@ -681,7 +707,7 @@ function updateMove(dt){
  updateMiniPlayer();
 }
 function enterHome(){
- document.body.style.opacity='.2';setTimeout(()=>location.href='./home.html?au='+encodeURIComponent(AU)+'&mode=play',180);
+ document.body.style.opacity='.2';setTimeout(()=>location.href='./home.html?au='+encodeURIComponent(AU)+'&mode=play&build=v218',180);
 }
 function updateMiniPlayer(){
  if(!state.char)return;const p=document.getElementById('miniPlayer');
