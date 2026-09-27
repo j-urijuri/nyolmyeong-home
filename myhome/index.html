@@ -210,7 +210,7 @@ body.is-embed .stage{border-top:0!important;box-shadow:none!important}
 <body data-mode="play" data-dirty="0">
 <div id="app">
 <header class="topbar">
-  <div class="brand"><div class="brandMark">⌂</div><div><b>MY HOME · OUTDOOR</b><small>WORLD MAP · v224</small></div></div>
+  <div class="brand"><div class="brandMark">⌂</div><div><b>MY HOME · OUTDOOR</b><small>WORLD MAP · v225</small></div></div>
   <div class="spacer"></div>
   <button class="topBtn active" id="playBtn">PLAY</button>
   <button class="topBtn edit" id="editBtn">EDIT</button>
@@ -291,10 +291,12 @@ document.body.dataset.au=AU;
 const THEME_STORE_KEY=`nyol:homepage-theme:${AU}:v1`;
 function applyHostTheme(theme){
  if(!theme||typeof theme!=='object')return;
- const r=document.documentElement;
+ const targets=[document.documentElement,document.body];
  const map={ink:'--ink',muted:'--muted',surface:'--paper',line:'--line',shell:'--shell',accent:'--accent',accent2:'--accent2'};
- for(const [k,v] of Object.entries(map)){if(theme[k])r.style.setProperty(v,theme[k])}
- if(theme.accent2)r.style.setProperty('--pink',theme.accent2);
+ for(const target of targets){
+  for(const [k,v] of Object.entries(map)){if(theme[k])target.style.setProperty(v,theme[k])}
+  if(theme.accent2)target.style.setProperty('--pink',theme.accent2);
+ }
 }
 function loadStoredHostTheme(){
  try{const t=JSON.parse(localStorage.getItem(THEME_STORE_KEY)||'null');if(t)applyHostTheme(t)}catch(_){ }
@@ -782,7 +784,7 @@ function updateMove(dt){
  updateMiniPlayer();
 }
 function enterHome(){
- document.body.style.opacity='.2';setTimeout(()=>location.href='./home.html?au='+encodeURIComponent(AU)+'&mode=play&build=v218',180);
+ document.body.style.opacity='.2';setTimeout(()=>location.href='./home.html?au='+encodeURIComponent(AU)+'&mode=play'+(EMBED?'&embed=1':'')+'&build=v225',180);
 }
 function updateMiniPlayer(){
  if(!state.char)return;const p=document.getElementById('miniPlayer');

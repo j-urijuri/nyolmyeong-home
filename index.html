@@ -10615,7 +10615,7 @@ rebuildAUControls();renderPlaylist();render();renderTopUpdateWidget();
 
   function myhomeUrl(mode,embed=true){
     const q=new URLSearchParams({au:currentAU||"base",mode:mode||"play"});
-    q.set("build","v224");
+    q.set("build","v225");
     if(embed)q.set("embed","1");
     return `${MYHOME_URL}?${q.toString()}`;
   }
@@ -10688,7 +10688,7 @@ window.addEventListener("message",e=>{
     window.addEventListener("message",e=>{
       const d=e.data;if(!d||d.source!=="nyol-myhome")return;
       const status=document.getElementById("nyolMyHomeStatus"),save=document.getElementById("nyolMyHomeSaveState");
-      if(d.type==="ready"&&status)status.textContent="CONNECTED";
+      if(d.type==="ready"){if(status)status.textContent="CONNECTED";syncMyHomeTheme()}
       if(d.type==="mode"&&status)status.textContent=(d.mode||"play").toUpperCase()+" MODE";
       if(d.type==="saved"&&save){save.textContent="SAVED";setTimeout(()=>{if(save)save.textContent="READY"},1200)}
     });
