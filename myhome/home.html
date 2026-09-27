@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>NYOL MY HOME · INTERIOR · v213</title>
+<title>NYOL MY HOME · INTERIOR · v226</title>
 <script type="importmap">
 {"imports":{
   "three":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js",
@@ -104,6 +104,11 @@ body.is-embed .topbar{border-radius:14px 14px 0 0!important;overflow:hidden!impo
 body.is-embed .stageWrap{height:auto!important;min-height:0!important;border-radius:14px!important;overflow:hidden!important;border-top:0!important;box-shadow:none!important}
 body.is-embed .bottomInfo{display:none!important}
 </style>
+
+<style id="v226-cozy-interior-tone">
+#scene{filter:saturate(.88) contrast(.96) brightness(1.035)}
+</style>
+
 </head>
 <body data-mode="play" data-dirty="0">
 <div id="app">
@@ -212,7 +217,7 @@ const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false,powerP
 renderer.outputColorSpace=THREE.SRGBColorSpace;
 renderer.setPixelRatio(Math.min(devicePixelRatio||1,1.5));
 const scene=new THREE.Scene();
-scene.background=new THREE.Color(0xf2e9e2);
+scene.background=new THREE.Color(0xeadfca);
 const camera=new THREE.PerspectiveCamera(32,1,.01,100);
 camera.position.set(4.75,4.35,6.15);
 camera.lookAt(0,.38,0);
@@ -247,28 +252,42 @@ function basicMat(color){return new THREE.MeshBasicMaterial({color,side:THREE.Do
 function box(w,h,d,color,x,y,z){
  const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),basicMat(color));m.position.set(x,y,z);scene.add(m);return m;
 }
-const floor=new THREE.Mesh(new THREE.PlaneGeometry(5.4,4.15),basicMat(0xe8d3c3));
+function canvasTexture(size,draw){
+ const c=document.createElement('canvas');c.width=c.height=size;const x=c.getContext('2d');draw(x,size);
+ const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;t.wrapS=t.wrapT=THREE.RepeatWrapping;return t;
+}
+const woodTex=canvasTexture(256,(x,s)=>{
+ x.fillStyle='#d6b180';x.fillRect(0,0,s,s);
+ for(let i=0;i<8;i++){const y=i*32;x.fillStyle=i%2?'#d1aa79':'#ddb98a';x.fillRect(0,y,s,31);x.fillStyle='rgba(112,78,50,.13)';x.fillRect(0,y+31,s,1);}
+ for(let i=0;i<18;i++){x.fillStyle='rgba(116,79,49,.07)';x.fillRect((i*47)%256,(i*29)%256,70,1);}
+});woodTex.repeat.set(2.8,2.2);
+const floor=new THREE.Mesh(new THREE.PlaneGeometry(5.4,4.15),new THREE.MeshBasicMaterial({map:woodTex,side:THREE.DoubleSide}));
 floor.rotation.x=-Math.PI/2;floor.position.set(0,0,0);floor.name='floor';scene.add(floor);
-box(5.4,2.2,.08,0xf7eee9,0,1.1,-2.04);
-box(.08,2.2,4.1,0xf4e6e2,-2.66,1.1,0);
-const baseboard=box(5.4,.10,.11,0xcda98f,0,.06,-1.99);
-box(.11,.10,4.1,0xcda98f,-2.61,.06,0);
-
-const rug=new THREE.Mesh(new THREE.CircleGeometry(1.26,56),basicMat(0xf2d8df));
-rug.rotation.x=-Math.PI/2;rug.position.set(.18,.008,.38);rug.scale.set(1.25,.72,1);scene.add(rug);
+box(5.4,2.2,.08,0xeee3c8,0,1.1,-2.04);
+box(.08,2.2,4.1,0xeadfc5,-2.66,1.1,0);
+const ginghamTex=canvasTexture(128,(x,s)=>{
+ x.fillStyle='#efe4c9';x.fillRect(0,0,s,s);x.fillStyle='rgba(199,145,139,.18)';x.fillRect(0,0,32,s);x.fillRect(64,0,32,s);x.fillRect(0,0,s,32);x.fillRect(0,64,s,32);x.fillStyle='rgba(190,132,128,.10)';x.fillRect(0,0,32,32);x.fillRect(64,64,32,32);
+});ginghamTex.repeat.set(5.2,2.5);
+const wallPaper=new THREE.Mesh(new THREE.PlaneGeometry(5.25,2.05),new THREE.MeshBasicMaterial({map:ginghamTex,side:THREE.DoubleSide}));
+wallPaper.position.set(0,1.11,-1.992);scene.add(wallPaper);
+const baseboard=box(5.4,.10,.11,0xb88b63,0,.06,-1.99);
+box(.11,.10,4.1,0xb88b63,-2.61,.06,0);
+const stripeTex=canvasTexture(128,(x,s)=>{x.fillStyle='#f0e2c9';x.fillRect(0,0,s,s);x.fillStyle='#dba8a0';for(let i=0;i<4;i++)x.fillRect(i*32,0,16,s)});stripeTex.repeat.set(3.5,1);
+const rug=new THREE.Mesh(new THREE.PlaneGeometry(2.55,1.45),new THREE.MeshBasicMaterial({map:stripeTex,side:THREE.DoubleSide}));
+rug.rotation.x=-Math.PI/2;rug.position.set(.18,.011,.38);scene.add(rug);
 
 // Simple decorative window / wall frames so the room still reads before 3D assets finish loading.
 box(1.26,.88,.035,WINDOW_SKY,-.65,1.28,-1.985);
-box(.055,.88,.045,0xaa8e7b,-1.27,1.28,-1.96);box(.055,.88,.045,0xaa8e7b,-.03,1.28,-1.96);
-box(1.26,.055,.045,0xaa8e7b,-.65,1.70,-1.96);box(1.26,.055,.045,0xaa8e7b,-.65,.86,-1.96);
-box(.055,.82,.045,0xaa8e7b,-.65,1.28,-1.96);
+box(.055,.88,.045,0xa77f59,-1.27,1.28,-1.96);box(.055,.88,.045,0xa77f59,-.03,1.28,-1.96);
+box(1.26,.055,.045,0xa77f59,-.65,1.70,-1.96);box(1.26,.055,.045,0xa77f59,-.65,.86,-1.96);
+box(.055,.82,.045,0xa77f59,-.65,1.28,-1.96);
 // v189: a visible room door + second window. These are world objects, not UI-only exits.
 const exitDoor=new THREE.Group();
-const doorLeaf=new THREE.Mesh(new THREE.BoxGeometry(.88,1.86,.055),basicMat(0xc9958d));
+const doorLeaf=new THREE.Mesh(new THREE.BoxGeometry(.88,1.86,.055),basicMat(0xb88a65));
 doorLeaf.position.set(1.78,.93,-1.955);exitDoor.add(doorLeaf);
-const doorInset=new THREE.Mesh(new THREE.BoxGeometry(.70,1.62,.020),basicMat(0xd9aaa0));
+const doorInset=new THREE.Mesh(new THREE.BoxGeometry(.70,1.62,.020),basicMat(0xcaa47d));
 doorInset.position.set(1.78,.93,-1.920);exitDoor.add(doorInset);
-const knob=new THREE.Mesh(new THREE.SphereGeometry(.045,12,8),basicMat(0x7b6556));
+const knob=new THREE.Mesh(new THREE.SphereGeometry(.045,12,8),basicMat(0x66513e));
 knob.position.set(2.07,.90,-1.875);exitDoor.add(knob);
 outline(exitDoor,'#725962',.34,1.008);
 scene.add(exitDoor);
@@ -283,17 +302,17 @@ state.exitDoorHit=exitDoorHit;
 
 // second window on the left wall
 box(.035,.84,1.22,WINDOW_SKY,-2.615,1.29,.38);
-box(.045,.88,.055,0xaa8e7b,-2.585,1.29,-.24);
-box(.045,.88,.055,0xaa8e7b,-2.585,1.29,1.00);
-box(.045,.055,1.24,0xaa8e7b,-2.585,1.70,.38);
-box(.045,.055,1.24,0xaa8e7b,-2.585,.88,.38);
-box(.045,.82,.055,0xaa8e7b,-2.585,1.29,.38);
+box(.045,.88,.055,0xa77f59,-2.585,1.29,-.24);
+box(.045,.88,.055,0xa77f59,-2.585,1.29,1.00);
+box(.045,.055,1.24,0xa77f59,-2.585,1.70,.38);
+box(.045,.055,1.24,0xa77f59,-2.585,.88,.38);
+box(.045,.82,.055,0xa77f59,-2.585,1.29,.38);
 
 
-const grid=new THREE.GridHelper(4.8,24,0xcaa9b3,0xe6d4d8);
+const grid=new THREE.GridHelper(4.8,24,0x9f8065,0xd9c8aa);
 grid.position.y=.012;grid.material.transparent=true;grid.material.opacity=.34;grid.visible=false;scene.add(grid);
 
-const selectBox=new THREE.BoxHelper(new THREE.Object3D(),0xc56f8a);
+const selectBox=new THREE.BoxHelper(new THREE.Object3D(),0xb77d78);
 selectBox.material.depthTest=false;selectBox.renderOrder=30;selectBox.visible=false;scene.add(selectBox);
 
 function flatten(obj){
@@ -309,11 +328,27 @@ function flatten(obj){
    n.material=Array.isArray(n.material)?next:next[0];
  });
 }
-function outline(obj,color='#725962',opacity=.34,inflate=1.009){
+function outline(obj,color='#6d5946',opacity=.18,inflate=1.007){
  const meshes=[];obj.traverse(n=>{if(n.isMesh&&!n.userData.outlineShell)meshes.push(n)});
  meshes.forEach(m=>{
    const shell=new THREE.Mesh(m.geometry,new THREE.MeshBasicMaterial({color,side:THREE.BackSide,transparent:true,opacity,depthWrite:false}));
    shell.scale.setScalar(inflate);shell.userData.outlineShell=true;m.add(shell);
+ });
+}
+function applyFurniturePalette(obj){
+ obj.traverse(n=>{
+  if(!n.isMesh)return;
+  const mats=Array.isArray(n.material)?n.material:[n.material];
+  mats.filter(Boolean).forEach(m=>{
+   if(!m.color)return;const h={h:0,s:0,l:0};m.color.getHSL(h);
+   if(h.s<.12){m.color.set(h.l>.72?'#eee2c7':h.l<.28?'#5b4b3d':'#b79570')}
+   else if(h.h>.18&&h.h<.46){m.color.set('#8f9b6c')}
+   else if(h.h>=.46&&h.h<.68){m.color.set('#8fb3ad')}
+   else if(h.h<.09){m.color.set('#c78f82')}
+   else if(h.h>.90){m.color.set('#cf9b9b')}
+   else if(h.h>.09&&h.h<.18){m.color.set('#c79b67')}
+   m.needsUpdate=true;
+  });
  });
 }
 function normalize(obj,target,yScale=1){
@@ -379,7 +414,7 @@ async function loadFurniture(){
  for(const [k,spec] of Object.entries(SPECS)){
    try{
      const obj=await new Promise((resolve,reject)=>new FBXLoader().load(spec.url,resolve,undefined,reject));
-     flatten(obj);outline(obj,'#927980',.28,1.007);normalize(obj,spec.target,spec.yScale);
+     flatten(obj);applyFurniturePalette(obj);outline(obj,'#6d5946',.16,1.006);normalize(obj,spec.target,spec.yScale);
      const root=new THREE.Group();root.userData.furnitureKey=k;root.add(obj);scene.add(root);state.objects[k]=root;applyFurniture(k);ok++;
    }catch(e){console.warn('Furniture failed',k,e)}
  }
@@ -450,7 +485,7 @@ function updateMovement(dt){
      if(state.exitPending){
        state.exitPending=false;
        document.body.style.opacity='.35';
-       setTimeout(()=>{location.href='./index.html?au='+encodeURIComponent(AU)+'&mode=play'+(EMBED?'&embed=1':'')+'&build=v225'},150);
+       setTimeout(()=>{location.href='./index.html?au='+encodeURIComponent(AU)+'&mode=play'+(EMBED?'&embed=1':'')+'&build=v226'},150);
      }
    }else{dx=vx;dz=vz}
  }
@@ -490,7 +525,7 @@ function setMode(mode,force=false){
 }
 document.getElementById('playModeBtn').onclick=()=>setMode('play');
 document.getElementById('editModeBtn').onclick=()=>setMode('edit');
-document.getElementById('outsideBtn').onclick=()=>{document.body.style.opacity='.3';setTimeout(()=>{location.href='./index.html?au='+encodeURIComponent(AU)+'&mode=play'+(EMBED?'&embed=1':'')+'&build=v225'},180)};
+document.getElementById('outsideBtn').onclick=()=>{document.body.style.opacity='.3';setTimeout(()=>{location.href='./index.html?au='+encodeURIComponent(AU)+'&mode=play'+(EMBED?'&embed=1':'')+'&build=v226'},180)};
 document.getElementById('fullBtn').onclick=()=>document.documentElement.requestFullscreen?.();
 document.getElementById('saveEdit').onclick=()=>{saveLayout();setMode('play',true)};
 document.getElementById('cancelEdit').onclick=()=>{restoreSnapshot(state.editSnapshot);setMode('play',true);toast('편집 전 배치로 돌아왔어요')};
@@ -544,7 +579,7 @@ canvas.addEventListener('pointerup',e=>{
      state.exitPending=false;
      toast('밖으로 나갈게요');
      document.body.style.opacity='.35';
-     setTimeout(()=>{location.href='./index.html?au='+encodeURIComponent(AU)+'&mode=play'+(EMBED?'&embed=1':'')+'&build=v225'},150);
+     setTimeout(()=>{location.href='./index.html?au='+encodeURIComponent(AU)+'&mode=play'+(EMBED?'&embed=1':'')+'&build=v226'},150);
      return;
    }
    const p=new THREE.Vector3();

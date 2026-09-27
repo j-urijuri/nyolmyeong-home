@@ -10615,7 +10615,7 @@ rebuildAUControls();renderPlaylist();render();renderTopUpdateWidget();
 
   function myhomeUrl(mode,embed=true){
     const q=new URLSearchParams({au:currentAU||"base",mode:mode||"play"});
-    q.set("build","v225");
+    q.set("build","v226");
     if(embed)q.set("embed","1");
     return `${MYHOME_URL}?${q.toString()}`;
   }
