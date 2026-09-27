@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>NYOL MY HOME · INTERIOR · v189</title>
+<title>NYOL MY HOME · INTERIOR · v213</title>
 <script type="importmap">
 {"imports":{
   "three":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js",
@@ -77,6 +77,24 @@ body.is-embed .topbar{display:flex!important;height:42px!important;padding:5px 8
 body.is-embed .brand small{display:none!important}
 body.is-embed .topBtn{padding:5px 7px!important;font-size:7px!important}
 </style>
+<style id="v213-au-control-ui">
+/* Same AU-aware control chrome as the outdoor map. Room/world colors remain independent. */
+body[data-au="base"]{--ink:#685e54;--muted:#93877a;--cream:#fffdf9;--paper:#fffaf9;--line:#e0d5ca;--pink:#dcc7c4;--pink2:#eee0de;--shadow:rgba(91,70,53,.10);--ui-shell:#eee3dd;--ui-accent:#dfd0b7;--ui-accent2:#dcc7c4}
+body[data-au="au1"]{--ink:#e4dada;--muted:#948689;--cream:#151313;--paper:#151313;--line:#3a2b2d;--pink:#8c4b52;--pink2:#251b1d;--shadow:rgba(0,0,0,.28);--ui-shell:#1b1718;--ui-accent:#6f3539;--ui-accent2:#8c4b52}
+body[data-au="au2"]{--ink:#6b5f5b;--muted:#958783;--cream:#fffaf8;--paper:#fffaf8;--line:#ddd0cb;--pink:#d7b8b8;--pink2:#eee1df;--shadow:rgba(88,68,64,.10);--ui-shell:#ece2df;--ui-accent:#d4c6c2;--ui-accent2:#d7b8b8}
+html,body{background:transparent!important}
+#app{border-radius:16px!important;overflow:hidden!important;background:var(--paper)!important}
+.topbar{background:linear-gradient(180deg,color-mix(in srgb,var(--paper) 90%,var(--ui-accent2) 10%),color-mix(in srgb,var(--ui-shell) 48%,var(--paper)))!important;border-bottom:1px solid var(--line)!important;box-shadow:0 4px 14px color-mix(in srgb,var(--ink) 5%,transparent)!important}
+.brandMark{background:color-mix(in srgb,var(--paper) 64%,var(--ui-accent2) 36%)!important;border-color:var(--line)!important;color:var(--ink)!important;box-shadow:none!important}.brandText b{color:var(--ink)!important}.brandText small{color:var(--muted)!important}
+.pill,.fullBtn{border-color:var(--line)!important;background:color-mix(in srgb,var(--paper) 88%,var(--ui-shell))!important;color:var(--ink)!important}
+.pill.active{background:color-mix(in srgb,var(--paper) 55%,var(--ui-accent) 45%)!important;border-color:color-mix(in srgb,var(--line) 65%,var(--ui-accent))!important;color:var(--ink)!important}
+.pill.edit.active{background:color-mix(in srgb,var(--paper) 54%,var(--ui-accent2) 46%)!important;border-color:color-mix(in srgb,var(--line) 65%,var(--ui-accent2))!important;color:var(--ink)!important}
+.modeBadge,.help,.playHud .hudCard,.editHud{background:color-mix(in srgb,var(--paper) 91%,transparent)!important;border-color:color-mix(in srgb,var(--line) 84%,transparent)!important;color:var(--ink)!important}.help,.hudCard span{color:var(--muted)!important}
+.furnChip,.iconBtn{background:var(--paper)!important;border-color:var(--line)!important;color:var(--ink)!important}.furnChip.active{background:color-mix(in srgb,var(--paper) 58%,var(--ui-accent2) 42%)!important;border-color:color-mix(in srgb,var(--line) 65%,var(--ui-accent2))!important}
+body.is-embed{padding:1px!important;background:transparent!important}
+body.is-embed #app{height:calc(100% - 2px)!important;grid-template-rows:42px minmax(0,1fr)!important;border:1px solid var(--line)!important;border-radius:15px!important;overflow:hidden!important;box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--line) 24%,transparent)!important}
+body.is-embed .stageWrap{height:auto!important;min-height:0!important}
+</style>
 </head>
 <body data-mode="play" data-dirty="0">
 <div id="app">
@@ -140,6 +158,7 @@ import {FBXLoader} from 'three/addons/loaders/FBXLoader.js';
 const qs=new URLSearchParams(location.search);
 const EMBED=qs.get('embed')==='1';if(EMBED)document.body.classList.add('is-embed');
 const AU=qs.get('au')||'base';
+document.body.dataset.au=AU;
 const START_MODE=(qs.get('mode')==='edit')?'edit':'play';
 const STORE_KEY=`nyol:myhome:${AU}:layout:v1`;
 const SNAP=.20;

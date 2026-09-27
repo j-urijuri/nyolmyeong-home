@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Mini Archive Preview v129</title>
+<title>Mini Archive Preview · v213 UI Polish</title>
 <style>
 /* v129: v127 layout preserved + polished 2.5D dollhouse home */
 :root{
@@ -6330,6 +6330,89 @@ body[data-au][data-skin] #nyolConsoleShell :is(.auPickerBtn,.settingsBtn,.studio
 </style>
 
 <style id="v207-deploy-marker">/* GitHub deployment: root=index homepage, /myhome/index=self-contained runtime */</style>
+<style id="v213-unified-soft-ui">
+/* v213 — one visual language for homepage utility windows + softer AU colors. */
+body[data-au="base"][data-wall="plain"]::before{
+  background:linear-gradient(135deg,#f5eee9 0%,#eee4de 54%,#eaded9 100%)!important;
+}
+body[data-au="au1"][data-wall="plain"]::before{
+  background:radial-gradient(circle at 18% 14%,rgba(103,54,60,.10),transparent 24%),linear-gradient(135deg,#0b0a0a 0%,#141112 52%,#201719 100%)!important;
+}
+body[data-au="au2"][data-wall="plain"]::before{
+  background:linear-gradient(135deg,#f3ece9 0%,#ece2df 54%,#e7d9d6 100%)!important;
+}
+body[data-au="base"][data-wall="dots"]::before{background-color:#f4ede8!important;background-image:radial-gradient(circle,#cdb7b3 0 1.35px,transparent 1.55px)!important}
+body[data-au="au1"][data-wall="dots"]::before{background-color:#0d0b0c!important;background-image:radial-gradient(circle,#5e3439 0 1.25px,transparent 1.5px)!important}
+body[data-au="au2"][data-wall="dots"]::before{background-color:#f1e9e6!important;background-image:radial-gradient(circle,#c7aaaa 0 1.3px,transparent 1.55px)!important}
+
+/* SETTINGS / UPDATE(new-post) / STUDIO LOGIN / AU dropdown share one window system. */
+.settingsPanel,
+.auMenu,
+.topUpdatePanel,
+.studioLoginCard{
+  border:1px solid color-mix(in srgb,var(--theme-line) 88%,var(--theme-ink) 12%)!important;
+  border-radius:16px!important;
+  background:color-mix(in srgb,var(--theme-surface) 95%,var(--theme-home) 5%)!important;
+  box-shadow:0 14px 34px color-mix(in srgb,var(--theme-ink) 10%,transparent),inset 0 1px 0 color-mix(in srgb,#fff 58%,transparent)!important;
+  overflow:hidden!important;
+}
+body[data-au="au1"] :is(.settingsPanel,.auMenu,.topUpdatePanel,.studioLoginCard){
+  box-shadow:0 16px 38px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.025)!important;
+}
+.settingsHead,
+.topUpdatePanelHead{
+  min-height:38px!important;
+  border-bottom:1px solid color-mix(in srgb,var(--theme-line) 68%,transparent)!important;
+  background:linear-gradient(180deg,color-mix(in srgb,var(--theme-surface) 90%,var(--theme-accent2) 10%),color-mix(in srgb,var(--theme-shell) 50%,var(--theme-surface)))!important;
+}
+.settingsHead button{
+  width:24px!important;height:24px!important;border:1px solid var(--theme-line)!important;border-radius:9px!important;
+  background:color-mix(in srgb,var(--theme-surface) 84%,var(--theme-shell))!important;color:var(--theme-muted)!important;
+}
+.settingBlock,.settingRow{border-color:color-mix(in srgb,var(--theme-line) 72%,transparent)!important}
+.auMenu{padding:6px!important;gap:4px!important}
+.auMenu button{min-height:28px!important;border-radius:10px!important;color:var(--theme-muted)!important}
+.auMenu button:hover{background:color-mix(in srgb,var(--theme-surface) 82%,var(--theme-accent2) 18%)!important;color:var(--theme-ink)!important}
+.auMenu button.active{background:color-mix(in srgb,var(--theme-surface) 66%,var(--theme-accent2) 34%)!important;color:var(--theme-ink)!important}
+.topUpdateTrigger{
+  border-color:color-mix(in srgb,var(--theme-line) 88%,var(--theme-ink) 12%)!important;
+  border-radius:12px!important;
+  background:color-mix(in srgb,var(--theme-surface) 91%,var(--theme-accent2) 9%)!important;
+  box-shadow:0 4px 13px color-mix(in srgb,var(--theme-ink) 6%,transparent)!important;
+}
+.topUpdateTrigger:hover,.topUpdateWidget.open .topUpdateTrigger{background:color-mix(in srgb,var(--theme-surface) 84%,var(--theme-accent2) 16%)!important}
+.topUpdateList{background:transparent!important}
+.topUpdateRow{border-radius:10px!important}
+.topUpdateRow:hover{background:color-mix(in srgb,var(--theme-surface) 82%,var(--theme-accent2) 18%)!important}
+.topUpdateCount,.topUpdateBadge{background:color-mix(in srgb,var(--theme-surface) 65%,var(--theme-accent2) 35%)!important;color:var(--theme-ink)!important}
+.topUpdateBadge.updated{background:color-mix(in srgb,var(--theme-surface) 69%,var(--theme-accent) 31%)!important}
+.studioLogin{padding:30px!important}
+.studioLoginCard{width:min(360px,92%)!important;padding:24px!important}
+.studioLoginCard .stamp{border-radius:8px!important;background:color-mix(in srgb,var(--theme-surface) 62%,var(--theme-accent2) 38%)!important}
+.studioLoginCard button{height:33px!important;border:1px solid var(--theme-line)!important;border-radius:10px!important;background:color-mix(in srgb,var(--theme-surface) 57%,var(--theme-accent) 43%)!important;color:var(--theme-ink)!important}
+body[data-skin] :is(.auPickerBtn,.settingsBtn,.studioEntry),.auPickerBtn,.settingsBtn,.studioEntry{
+  border-radius:10px!important;
+  background:color-mix(in srgb,var(--theme-surface) 80%,var(--theme-accent2) 20%)!important;
+  border-color:var(--theme-line)!important;color:var(--theme-ink)!important;
+}
+
+/* HOME host: rounded inset screen again; iframe content is still an independent project. */
+#nyolConsoleShell .content:has(.myhomeEmbedShell){padding:4px!important;background:transparent!important;overflow:hidden!important}
+#nyolConsoleShell .content:has(.myhomeEmbedShell) .myhomeEmbedShell,
+#nyolConsoleShell .content:has(.myhomeEmbedShell) .myhomeEmbedCard{
+  border-radius:17px!important;overflow:hidden!important;
+}
+#nyolConsoleShell .content:has(.myhomeEmbedShell) .myhomeEmbedFrameWrap{
+  border:1px solid color-mix(in srgb,var(--theme-line) 82%,var(--theme-ink) 18%)!important;
+  border-radius:16px!important;
+  background:color-mix(in srgb,var(--theme-surface) 82%,var(--theme-shell))!important;
+  box-shadow:inset 0 0 0 3px color-mix(in srgb,var(--theme-line) 24%,transparent)!important;
+  overflow:hidden!important;
+}
+#nyolConsoleShell .content:has(.myhomeEmbedShell) .myhomeEmbedFrame{
+  border-radius:15px!important;background:transparent!important;
+}
+</style>
 </head>
 <body data-wall="plain" data-skin="cream" data-au="base">
 <div id="viewport">
@@ -6503,9 +6586,9 @@ let current="HOME",playing=false,currentAU="base";
 const content=document.getElementById("content"),tabs=document.getElementById("tabs"),topBtn=document.getElementById("topBtn");
 
 const AUS={
- base:{bg:"#f7eee5",shell:"#f2ded4",surface:"#fffdf8",accent:"#ead1a7",accent2:"#e9c1bd",line:"#e8d7c5",ink:"#6c5e4c",muted:"#9f8d74",home:"#f6dfda",roomWall:"#fff4e8",roomFloor:"#ead8c8",avatar:"linear-gradient(145deg,#fff4bd,#efd3b8 56%,#d7e3cc)",pair:"BASE",songs:[["main theme","archive playlist","03:21"],["afternoon","archive playlist","04:06"],["memory lane","archive playlist","02:58"],["afterglow","archive playlist","03:43"],["winter light","archive playlist","03:11"]]},
- au1:{bg:"#080808",shell:"#121010",surface:"#111010",accent:"#8f2027",accent2:"#c33c43",line:"#3f2025",ink:"#eadedf",muted:"#a4878a",home:"#1b1214",roomWall:"#161010",roomFloor:"#0e0d0d",avatar:"linear-gradient(145deg,#1a1011,#0d0d0d 58%,#431418)",pair:"AU 01",songs:[["red room","AU 01 OST","03:18"],["after midnight","AU 01 OST","04:12"],["scarlet line","AU 01 OST","02:44"],["no return","AU 01 OST","03:31"]]},
- au2:{bg:"#f1e3df",shell:"#eeded9",surface:"#fffaf8",accent:"#ddc3be",accent2:"#e6aaa9",line:"#e4d0c8",ink:"#6f5d58",muted:"#9f8982",home:"#f0d8d3",roomWall:"#fff1eb",roomFloor:"#ead8d2",avatar:"linear-gradient(145deg,#f6e6df,#edd4d0 56%,#e8d9d4)",pair:"AU 02",songs:[["rose dusk","AU 02 OST","03:42"],["paper moon","AU 02 OST","04:01"],["warm window","AU 02 OST","03:08"],["sleepwalk","AU 02 OST","02:55"]]}
+ base:{bg:"#f5eee9",shell:"#eee3dd",surface:"#fffdf9",accent:"#dfd0b7",accent2:"#dcc7c4",line:"#e0d5ca",ink:"#685e54",muted:"#93877a",home:"#efe0dc",roomWall:"#fbf2e9",roomFloor:"#e7d9cd",avatar:"linear-gradient(145deg,#fff4bd,#efd3b8 56%,#d7e3cc)",pair:"BASE",songs:[["main theme","archive playlist","03:21"],["afternoon","archive playlist","04:06"],["memory lane","archive playlist","02:58"],["afterglow","archive playlist","03:43"],["winter light","archive playlist","03:11"]]},
+ au1:{bg:"#0b0a0a",shell:"#151212",surface:"#151313",accent:"#6f3539",accent2:"#8c4b52",line:"#3a2b2d",ink:"#e4dada",muted:"#948689",home:"#1b1516",roomWall:"#181415",roomFloor:"#111010",avatar:"linear-gradient(145deg,#1a1011,#0d0d0d 58%,#431418)",pair:"AU 01",songs:[["red room","AU 01 OST","03:18"],["after midnight","AU 01 OST","04:12"],["scarlet line","AU 01 OST","02:44"],["no return","AU 01 OST","03:31"]]},
+ au2:{bg:"#f1e9e6",shell:"#ece2df",surface:"#fffaf8",accent:"#d4c6c2",accent2:"#d7b8b8",line:"#ddd0cb",ink:"#6b5f5b",muted:"#958783",home:"#ecdcd9",roomWall:"#faf0ec",roomFloor:"#e6d8d3",avatar:"linear-gradient(145deg,#f6e6df,#edd4d0 56%,#e8d9d4)",pair:"AU 02",songs:[["rose dusk","AU 02 OST","03:42"],["paper moon","AU 02 OST","04:01"],["warm window","AU 02 OST","03:08"],["sleepwalk","AU 02 OST","02:55"]]}
 };
 
 const PROFILE_PHASES={
