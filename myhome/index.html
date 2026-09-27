@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>NYOL MY HOME · OUTDOOR v211</title>
+<title>NYOL MY HOME · OUTDOOR v212</title>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <script type="importmap">
 {"imports":{
@@ -62,7 +62,7 @@ body.is-embed .hint{top:10px}
 
 </style>
 
-<style id="v211-time-sky">
+<style id="v212-time-sky">
 :root{
   --sky-top:#a8dcf2;
   --sky-bottom:#e7f4f3;
@@ -94,7 +94,7 @@ body[data-sky="night"] .stage::before{
 </style>
 
 
-<style id="v211-myhome-buttons">
+<style id="v212-myhome-buttons">
 .topbar{
   height:46px!important;
   padding:6px 9px!important;
@@ -127,17 +127,14 @@ body.is-embed .topBtn{height:25px!important;min-width:39px!important;padding:0 8
 body.is-embed .brandMark{width:25px!important;height:25px!important}
 </style>
 
-<style id="v211-pastel-filter">
-#scene{filter:saturate(.73) contrast(.93) brightness(1.045)}
-</style>
-<style id="v211-soft-pastel">
-#scene{filter:saturate(.56) contrast(.90) brightness(1.075)}
+<style id="v212-soft-pastel">
+#scene{filter:saturate(.38) contrast(.90) brightness(1.07)}
 </style>
 </head>
 <body data-mode="play" data-dirty="0">
 <div id="app">
 <header class="topbar">
-  <div class="brand"><div class="brandMark">⌂</div><div><b>MY HOME · OUTDOOR</b><small>WORLD MAP · v211</small></div></div>
+  <div class="brand"><div class="brandMark">⌂</div><div><b>MY HOME · OUTDOOR</b><small>WORLD MAP · v212</small></div></div>
   <div class="spacer"></div>
   <button class="topBtn active" id="playBtn">PLAY</button>
   <button class="topBtn edit" id="editBtn">EDIT</button>
@@ -248,14 +245,14 @@ applySkyTheme();
 setInterval(applySkyTheme,60000);
 
 const scene=new THREE.Scene();scene.background=null;
-const camera=new THREE.PerspectiveCamera(28,1,.01,600);camera.position.set(0,3.0,14.2);camera.lookAt(0,.72,.8);
+const camera=new THREE.PerspectiveCamera(28,1,.01,600);camera.position.set(7.4,5.15,9.4);camera.lookAt(0,.35,.25);
 
 const state={
  mode:'play',char:null,charVisual:null,mixer:null,actions:{},action:null,target:null,onArrive:null,
  keys:new Set(),walk:0,objects:{},bounds:{},selected:'benchA',drag:null,last:performance.now(),
  snapshot:null,dirty:false,houseRoot:null,houseCollider:null,doorCollider:null,mailboxRoot:null,path:[],
  autoAt:performance.now()+4200,charDragging:false,charLiftY:0,
- camera:{yaw:0,pitch:.16,distance:13.5,target:new THREE.Vector3(0,.72,.8),desired:new THREE.Vector3(0,.72,.8)},
+ camera:{yaw:0,pitch:.16,distance:11.8,target:new THREE.Vector3(0,.72,.70),desired:new THREE.Vector3(0,.72,.70)},
  pointer:{id:null,x:0,y:0,lastX:0,lastY:0,moved:false,camera:false,pendingHit:null}
 };
 const DEFAULTS={
@@ -306,7 +303,7 @@ function flatten(obj){
   const arr=Array.isArray(n.material)?n.material:[n.material];
   const next=arr.filter(Boolean).map(m=>{
    const c=m.color?.clone?.()||new THREE.Color('#e1d4ce'),h={h:0,s:0,l:0};c.getHSL(h);
-   c.setHSL(h.h,Math.min(1,h.s*1.08),Math.min(1,h.l*1.035));
+   c.setHSL(h.h,Math.min(1,h.s*.94),Math.min(1,h.l*1.04));
    return new THREE.MeshBasicMaterial({color:c,map:m.map||null,transparent:!!m.transparent,opacity:m.opacity??1,alphaTest:m.alphaTest||0,side:m.side});
   });
   n.material=Array.isArray(n.material)?next:next[0];
@@ -335,7 +332,7 @@ const spec={
  foliageB:{file:'foliage_B.fbx',target:.95},
  boots:{file:'boots.fbx',target:.34},
  doormat:{file:'doormat.fbx',target:.78,outline:false},
- house:{file:'house.fbx',target:3.35},
+ house:{file:'house.fbx',target:4.85},
  gateRight:{file:'gate_double_right.fbx',target:1.55},
  gateSingle:{file:'gate_single.fbx',target:1.05},
  mailbox:{file:'mailbox.fbx',target:.78},
@@ -425,7 +422,7 @@ async function buildWorld(){
 
  const jobs=[];
  jobs.push(asset('house').then(h=>{
-   const root=new THREE.Group();root.userData.interaction='enterHome';root.add(h);root.position.set(0,0,-5.00);root.rotation.y=0;
+   const root=new THREE.Group();root.userData.interaction='enterHome';root.add(h);root.position.set(0,.025,-5.00);root.rotation.y=0;
    scene.add(root);state.houseRoot=root;return true;
  }));
 
@@ -462,7 +459,7 @@ async function loadCharacter(){
 
    const root=new THREE.Group(),vis=new THREE.Group(),m=g.scene;flatten(m);outline(m,'#514348',.84,1.0105);vis.add(m);root.add(vis);scene.add(root);
    let b=new THREE.Box3().setFromObject(m),sz=b.getSize(new THREE.Vector3()),c=b.getCenter(new THREE.Vector3());m.position.sub(c);m.scale.setScalar(1.04/(sz.y||1));b=new THREE.Box3().setFromObject(m);m.position.y-=b.min.y;
-   vis.rotation.y=Math.PI;root.position.set(0,0,3.10);state.char=root;state.charVisual=vis;
+   vis.rotation.y=0;root.position.set(0,0,3.10);state.char=root;state.charVisual=vis;
    if(g.animations?.length){state.mixer=new THREE.AnimationMixer(m);g.animations.forEach(c=>state.actions[c.name.toLowerCase()]=state.mixer.clipAction(c));action('idle')}
    resolve(true)
  };
@@ -479,7 +476,7 @@ async function loadCharacter(){
  });
 }
 const STATIC_BLOCKERS=[
- {x:0,z:-5.00,r:1.55},
+ {x:0,z:-5.00,r:1.38},
  {x:-5.7,z:-4.4,r:.58},{x:5.6,z:-4.2,r:.58},
  {x:-6.2,z:1.1,r:.58},{x:6.0,z:1.8,r:.58},
  {x:-4.7,z:5.3,r:.50},{x:4.5,z:5.2,r:.50},
@@ -597,29 +594,16 @@ function updateMiniPlayer(){
  p.style.left=`${px}%`;p.style.top=`${100-pz}%`;
 }
 function resetCamera(){
- state.camera.yaw=0;state.camera.pitch=.16;state.camera.distance=13.5;
- if(state.char){
-   const lookAhead=2.1;
-   state.camera.desired.set(
-     state.char.position.x-Math.sin(state.camera.yaw)*lookAhead,
-     .72,
-     state.char.position.z-Math.cos(state.camera.yaw)*lookAhead
-   );
- }else state.camera.desired.set(0,.72,.8);
+ state.camera.yaw=0;state.camera.pitch=.16;state.camera.distance=11.8;
+ if(state.char)state.camera.desired.set(state.char.position.x,.72,state.char.position.z-2.40);
+ else state.camera.desired.set(0,.72,.70);
  toast('카메라 기본 앵글');
 }
 function updateCamera(dt){
  if(state.mode==='play'&&state.char){
-   // Look slightly ahead of the character so the house/world stays visible instead of
-   // centering the character and pushing the destination onto the horizon.
-   const lookAhead=2.1;
-   state.camera.desired.set(
-     state.char.position.x-Math.sin(state.camera.yaw)*lookAhead,
-     .72,
-     state.char.position.z-Math.cos(state.camera.yaw)*lookAhead
-   );
+   state.camera.desired.set(state.char.position.x,.72,state.char.position.z-2.40);
  }else{
-   state.camera.desired.set(0,.72,.8);
+   state.camera.desired.set(0,.72,.70);
  }
  const follow=1-Math.exp(-dt*4.5);
  state.camera.target.lerp(state.camera.desired,follow);
@@ -675,8 +659,10 @@ function floorPointFromEvent(e){
 function handlePlayTap(e){
  const hit=interactionHit(e);
  if(hit?.type==='home'){
-   planRoute(0,-3.05,enterHome);
-   toast(hit.door?'문 앞으로 이동할게요':'집 문으로 이동할게요');return;
+   toast(hit.door?'집으로 들어갈게요':'집으로 들어갈게요');
+   state.target=null;state.path=[];state.onArrive=null;
+   setTimeout(enterHome,120);
+   return;
  }
  if(hit?.type==='mailbox'){
    const f=layout.mailbox||DEFAULTS.mailbox;
@@ -748,7 +734,7 @@ canvas.addEventListener('pointermove',e=>{
  }else if(ps.moved){
    ps.camera=true;
    state.camera.yaw-=dx*.008;
-   state.camera.pitch=.16;
+   state.camera.pitch=.12;
  }
  ps.lastX=e.clientX;ps.lastY=e.clientY;
 });
@@ -776,7 +762,7 @@ canvas.addEventListener('pointerup',finishPointer);
 canvas.addEventListener('pointercancel',e=>{state.drag=null;state.charDragging=false;if(state.charVisual)state.charVisual.position.y=0;canvas.style.cursor='';state.pointer.id=null;state.pointer.camera=false;postponeAuto(5000)});
 canvas.addEventListener('wheel',e=>{
  e.preventDefault();
- state.camera.distance=Math.max(10.5,Math.min(22,state.camera.distance+Math.sign(e.deltaY)*.65));
+ state.camera.distance=Math.max(9.8,Math.min(17.5,state.camera.distance+Math.sign(e.deltaY)*.60));
 },{passive:false});
 
 const km={ArrowLeft:'left',a:'left',A:'left',ArrowRight:'right',d:'right',D:'right',ArrowUp:'up',w:'up',W:'up',ArrowDown:'down',s:'down',S:'down'};

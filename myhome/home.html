@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>NYOL MY HOME · INTERIOR · v211 · v189</title>
+<title>NYOL MY HOME · INTERIOR · v189</title>
 <script type="importmap">
 {"imports":{
   "three":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js",
@@ -363,7 +363,7 @@ async function loadCharacter(){
     let b=new THREE.Box3().setFromObject(model),s=b.getSize(new THREE.Vector3()),c=b.getCenter(new THREE.Vector3());
     model.position.sub(c);const scale=1.10/(s.y||1);model.scale.setScalar(scale);
     b=new THREE.Box3().setFromObject(model);model.position.y-=b.min.y;
-    visual.rotation.y=Math.PI;root.position.set(.15,0,1.12);
+    visual.rotation.y=0;root.position.set(.15,0,1.12);
     state.char=root;state.charVisual=visual;
     if(gltf.animations?.length){
       state.mixer=new THREE.AnimationMixer(model);
@@ -406,7 +406,8 @@ function updateMovement(dt){
      state.target=null;
      if(state.exitPending){
        state.exitPending=false;
-       goOutside();
+       document.body.style.opacity='.35';
+       setTimeout(()=>{location.href='./index.html?au='+encodeURIComponent(AU)+'&mode=play'},150);
      }
    }else{dx=vx;dz=vz}
  }
@@ -422,13 +423,6 @@ function updateMovement(dt){
 }
 function toast(msg){
  const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove('show'),1400);
-}
-function goOutside(){
- if(document.body.dataset.leaving==='1')return;
- document.body.dataset.leaving='1';
- toast('밖으로 나갈게요');
- document.body.style.opacity='.35';
- setTimeout(()=>{location.href='./index.html?au='+encodeURIComponent(AU)+'&mode=play'},150);
 }
 async function setExpression(name){
  if(!state.faceMaterial){toast('FACE 재질 이름을 연결하면 표정 텍스처 교체가 활성화돼요');return}
@@ -453,7 +447,7 @@ function setMode(mode,force=false){
 }
 document.getElementById('playModeBtn').onclick=()=>setMode('play');
 document.getElementById('editModeBtn').onclick=()=>setMode('edit');
-document.getElementById('outsideBtn').onclick=goOutside;
+document.getElementById('outsideBtn').onclick=()=>{document.body.style.opacity='.3';setTimeout(()=>{location.href='./index.html?au='+encodeURIComponent(AU)+'&mode=play'},180)};
 document.getElementById('fullBtn').onclick=()=>document.documentElement.requestFullscreen?.();
 document.getElementById('saveEdit').onclick=()=>{saveLayout();setMode('play',true)};
 document.getElementById('cancelEdit').onclick=()=>{restoreSnapshot(state.editSnapshot);setMode('play',true);toast('편집 전 배치로 돌아왔어요')};
@@ -503,9 +497,12 @@ canvas.addEventListener('pointerup',e=>{
  if(state.mode==='play'&&!moved&&!wasDrag){
    rayAt(e);
    if((state.exitDoorHit&&ray.intersectObject(state.exitDoorHit,true).length)||(state.exitDoor&&ray.intersectObject(state.exitDoor,true).length)){
-     // The old route target sat against the wall collider and could leave the character
-     // walking forever. A door click is an explicit exit action, so navigate reliably.
-     state.target=null;state.exitPending=false;goOutside();return;
+     state.target=null;
+     state.exitPending=false;
+     toast('밖으로 나갈게요');
+     document.body.style.opacity='.35';
+     setTimeout(()=>{location.href='./index.html?au='+encodeURIComponent(AU)+'&mode=play'},150);
+     return;
    }
    const p=new THREE.Vector3();
    if(ray.ray.intersectPlane(floorPlane,p)){state.exitPending=false;state.target={x:p.x,z:p.z}};
