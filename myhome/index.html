@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>NYOL MY HOME · OUTDOOR v212</title>
+<title>NYOL MY HOME · OUTDOOR v214</title>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <script type="importmap">
 {"imports":{
@@ -130,11 +130,37 @@ body.is-embed .brandMark{width:25px!important;height:25px!important}
 <style id="v212-soft-pastel">
 #scene{filter:saturate(.38) contrast(.90) brightness(1.07)}
 </style>
+<style id="v213-au-control-ui">
+/* AU colors affect only MyHome controls/chrome. The 3D world keeps its own palette. */
+body[data-au="base"]{--ink:#685e54;--muted:#93877a;--paper:#fffdf9;--line:#e0d5ca;--shell:#eee3dd;--accent:#dfd0b7;--accent2:#dcc7c4;--pink:#cda8b1;--shadow:rgba(91,70,53,.10)}
+body[data-au="au1"]{--ink:#e4dada;--muted:#948689;--paper:#151313;--line:#3a2b2d;--shell:#1b1718;--accent:#6f3539;--accent2:#8c4b52;--pink:#8c4b52;--shadow:rgba(0,0,0,.28)}
+body[data-au="au2"]{--ink:#6b5f5b;--muted:#958783;--paper:#fffaf8;--line:#ddd0cb;--shell:#ece2df;--accent:#d4c6c2;--accent2:#d7b8b8;--pink:#c9a9aa;--shadow:rgba(88,68,64,.10)}
+html,body{background:transparent!important}
+#app{border-radius:16px!important;overflow:hidden!important;background:var(--paper)!important}
+body.is-embed{padding:1px;background:transparent!important}
+body.is-embed #app{height:calc(100% - 2px)!important;border:1px solid var(--line)!important;border-radius:15px!important;overflow:hidden!important;box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--line) 24%,transparent)!important}
+.topbar{background:linear-gradient(180deg,color-mix(in srgb,var(--paper) 90%,var(--accent2) 10%),color-mix(in srgb,var(--shell) 48%,var(--paper)))!important;border-bottom:1px solid var(--line)!important;box-shadow:0 4px 14px color-mix(in srgb,var(--ink) 5%,transparent)!important}
+.brandMark{background:color-mix(in srgb,var(--paper) 66%,var(--accent2) 34%)!important;border-color:var(--line)!important;color:var(--ink)!important}
+.brand b{color:var(--ink)!important}.brand small{color:var(--muted)!important}
+.topBtn{border-color:var(--line)!important;background:color-mix(in srgb,var(--paper) 88%,var(--shell))!important;color:var(--ink)!important;box-shadow:none!important}
+#playBtn.active{background:color-mix(in srgb,var(--paper) 55%,var(--accent) 45%)!important;border-color:color-mix(in srgb,var(--line) 65%,var(--accent))!important;color:var(--ink)!important}
+#editBtn.active{background:color-mix(in srgb,var(--paper) 54%,var(--accent2) 46%)!important;border-color:color-mix(in srgb,var(--line) 65%,var(--accent2))!important;color:var(--ink)!important}
+#mapBtn.active{background:color-mix(in srgb,var(--paper) 54%,#aebfa2 46%)!important;border-color:color-mix(in srgb,var(--line) 68%,#aebfa2)!important;color:var(--ink)!important}
+#viewBtn{background:color-mix(in srgb,var(--paper) 80%,var(--shell))!important;color:var(--muted)!important}
+.badge,.hint,.actionTip,.editPanel,.minimap{background:color-mix(in srgb,var(--paper) 91%,transparent)!important;border-color:color-mix(in srgb,var(--line) 84%,transparent)!important;color:var(--ink)!important}
+.hint{color:var(--muted)!important}.badge.edit{background:color-mix(in srgb,var(--accent2) 82%,transparent)!important;color:var(--ink)!important}
+.chip,.editBottom button,.embedDock button{background:var(--paper)!important;border-color:var(--line)!important;color:var(--ink)!important}
+.chip.active{background:color-mix(in srgb,var(--paper) 58%,var(--accent2) 42%)!important;border-color:color-mix(in srgb,var(--line) 65%,var(--accent2))!important}
+.footer{background:color-mix(in srgb,var(--paper) 94%,var(--shell))!important;border-color:var(--line)!important;color:var(--ink)!important}.footer span{color:var(--muted)!important}
+/* World color is deliberately AU-independent, just softened. */
+#scene{filter:saturate(.52) contrast(.95) brightness(1)!important;opacity:1!important}
+</style>
+<style id="v214-house-opaque-fix">/* house materials are forced opaque; fallback uses the same AU-independent soft palette */</style>
 </head>
 <body data-mode="play" data-dirty="0">
 <div id="app">
 <header class="topbar">
-  <div class="brand"><div class="brandMark">⌂</div><div><b>MY HOME · OUTDOOR</b><small>WORLD MAP · v212</small></div></div>
+  <div class="brand"><div class="brandMark">⌂</div><div><b>MY HOME · OUTDOOR</b><small>WORLD MAP · v214</small></div></div>
   <div class="spacer"></div>
   <button class="topBtn active" id="playBtn">PLAY</button>
   <button class="topBtn edit" id="editBtn">EDIT</button>
@@ -211,6 +237,7 @@ const qs=new URLSearchParams(location.search);
 const EMBED=qs.get('embed')==='1';
 if(EMBED)document.body.classList.add('is-embed');
 const AU=qs.get('au')||'base', START_MODE=qs.get('mode')==='edit'?'edit':'play';
+document.body.dataset.au=AU;
 const STORE=`nyol:myhome:${AU}:outdoor:v1`;
 const ROOM={minX:-20,maxX:20,minZ:-20,maxZ:20};
 const canvas=document.getElementById('scene'),stage=document.getElementById('stage');
@@ -219,10 +246,10 @@ document.body.dataset.runtime='ready';
 renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.setPixelRatio(Math.min(devicePixelRatio||1,1.45));
 
 const SKY_THEMES={
- dawn:{top:'#7f93b7',bottom:'#f4c4b7',orb:'#ffe0b2',ground:'#a8ca8f'},
- day:{top:'#a8dcf2',bottom:'#e7f4f3',orb:'#f5df9d',ground:'#a8cf8e'},
- sunset:{top:'#899fca',bottom:'#f1b0a3',orb:'#f4c17d',ground:'#a7c88a'},
- night:{top:'#24324f',bottom:'#4b5a79',orb:'#efe7c8',ground:'#78906f'}
+ dawn:{top:'#939eb8',bottom:'#e8c7be',orb:'#e8d3ad',ground:'#a9bf9a'},
+ day:{top:'#b8d2dc',bottom:'#e4ece8',orb:'#e6d5aa',ground:'#abc19b'},
+ sunset:{top:'#9aa6bd',bottom:'#ddb8b0',orb:'#dfc295',ground:'#a9bd98'},
+ night:{top:'#30394d',bottom:'#566071',orb:'#ddd7bd',ground:'#7f9078'}
 };
 function skyPhase(){
  const q=new URLSearchParams(location.search).get('sky');
@@ -250,9 +277,9 @@ const camera=new THREE.PerspectiveCamera(28,1,.01,600);camera.position.set(7.4,5
 const state={
  mode:'play',char:null,charVisual:null,mixer:null,actions:{},action:null,target:null,onArrive:null,
  keys:new Set(),walk:0,objects:{},bounds:{},selected:'benchA',drag:null,last:performance.now(),
- snapshot:null,dirty:false,houseRoot:null,houseCollider:null,doorCollider:null,mailboxRoot:null,path:[],
+ snapshot:null,dirty:false,houseRoot:null,houseFallback:null,houseCollider:null,doorCollider:null,mailboxRoot:null,path:[],
  autoAt:performance.now()+4200,charDragging:false,charLiftY:0,
- camera:{yaw:0,pitch:.16,distance:11.8,target:new THREE.Vector3(0,.72,.70),desired:new THREE.Vector3(0,.72,.70)},
+ camera:{yaw:0,pitch:.16,distance:9.35,target:new THREE.Vector3(0,.72,-.15),desired:new THREE.Vector3(0,.72,-.15)},
  pointer:{id:null,x:0,y:0,lastX:0,lastY:0,moved:false,camera:false,pendingHit:null}
 };
 const DEFAULTS={
@@ -307,8 +334,39 @@ function flatten(obj){
    return new THREE.MeshBasicMaterial({color:c,map:m.map||null,transparent:!!m.transparent,opacity:m.opacity??1,alphaTest:m.alphaTest||0,side:m.side});
   });
   n.material=Array.isArray(n.material)?next:next[0];
+  n.visible=true;n.frustumCulled=false;
  });
 }
+function forceVisible(obj){
+ obj.traverse(n=>{
+  n.visible=true;
+  if(n.isMesh){
+   n.frustumCulled=false;
+   const mats=Array.isArray(n.material)?n.material:[n.material];
+   mats.filter(Boolean).forEach(m=>{m.visible=true;m.opacity=1;if(!(m.alphaTest>0))m.transparent=false;m.side=THREE.DoubleSide;m.needsUpdate=true});
+  }
+ });
+}
+function makeHouseOpaque(obj){
+ obj.traverse(n=>{
+  n.visible=true;
+  if(!n.isMesh)return;
+  n.frustumCulled=false;
+  const mats=Array.isArray(n.material)?n.material:[n.material];
+  mats.filter(Boolean).forEach(m=>{
+   m.visible=true;
+   m.opacity=1;
+   m.transparent=false;
+   m.alphaTest=0;
+   m.depthWrite=true;
+   m.depthTest=true;
+   m.side=THREE.DoubleSide;
+   if(m.map){m.map.colorSpace=THREE.SRGBColorSpace;m.map.needsUpdate=true}
+   m.needsUpdate=true;
+  });
+ });
+}
+
 function outline(obj,color='#786068',opacity=.28,inflate=1.008){
  const a=[];obj.traverse(n=>{if(n.isMesh&&!n.userData.shell)a.push(n)});
  a.forEach(m=>{const s=new THREE.Mesh(m.geometry,new THREE.MeshBasicMaterial({color,side:THREE.BackSide,transparent:true,opacity,depthWrite:false}));s.scale.setScalar(inflate);s.userData.shell=true;m.add(s)});
@@ -413,6 +471,16 @@ function pathGeom(points,width,color=0xdcc3a5){
  const m=new THREE.Mesh(g,mat(color));scene.add(m);return m;
 }
 function addPlaza(x,z,r,color=0xe5ccb0){const m=new THREE.Mesh(new THREE.CircleGeometry(r,48),mat(color));m.rotation.x=-Math.PI/2;m.position.set(x,.014,z);scene.add(m);return m}
+function createHouseFallback(){
+ const root=new THREE.Group();root.userData.interaction='enterHome';
+ const body=mesh(new THREE.BoxGeometry(3.25,1.75,2.35),0xeee1d8);body.position.y=.88;
+ const roof=mesh(new THREE.ConeGeometry(2.35,1.22,4),0xc7a5aa);roof.rotation.y=Math.PI/4;roof.scale.z=.76;roof.position.y=2.05;
+ const door=mesh(new THREE.BoxGeometry(.62,1.12,.08),0xa58b82);door.position.set(0,.56,1.205);
+ const w1=mesh(new THREE.BoxGeometry(.68,.56,.07),0xbccfcb);w1.position.set(-.94,1.10,1.21);
+ const w2=w1.clone();w2.position.x=.94;
+ root.add(body,roof,door,w1,w2);root.position.set(0,.025,-5.00);root.renderOrder=1;
+ scene.add(root);state.houseFallback=root;return root;
+}
 async function buildWorld(){
  // Build the approved open field immediately; all FBX assets load in parallel.
  pathGeom([[0,12],[0,8],[.1,5],[-.1,2.3],[-.3,-.3],[-.25,-3.9]],.72);
@@ -421,10 +489,15 @@ async function buildWorld(){
  addPlaza(-2.7,.2,.72);
 
  const jobs=[];
+ createHouseFallback();
  jobs.push(asset('house').then(h=>{
+   makeHouseOpaque(h);
    const root=new THREE.Group();root.userData.interaction='enterHome';root.add(h);root.position.set(0,.025,-5.00);root.rotation.y=0;
-   scene.add(root);state.houseRoot=root;return true;
- }));
+   root.traverse(n=>{n.visible=true;if(n.isMesh)n.frustumCulled=false});
+   scene.add(root);state.houseRoot=root;
+   if(state.houseFallback){scene.remove(state.houseFallback);state.houseFallback=null}
+   return true;
+ }).catch(e=>{console.warn('house.fbx failed; visible fallback retained',e);return true;}));
 
  const trees=[
    ['treeLarge',-5.7,-4.4,0,.86],['treeLarge',5.6,-4.2,0,.85],
@@ -445,7 +518,7 @@ async function buildWorld(){
  const count=results.filter(r=>r.status==='fulfilled').length;
  const failed=results.length-count;
  if(failed)console.warn(`${failed} outdoor assets failed to load`);
- document.getElementById('status').textContent=`${count} outdoor objects · open flat world`;
+ document.getElementById('status').textContent=`${count} outdoor objects · ${state.houseRoot?'HOUSE OK':'HOUSE FALLBACK'} · soft world`;
  return count;
 }
 
@@ -594,16 +667,16 @@ function updateMiniPlayer(){
  p.style.left=`${px}%`;p.style.top=`${100-pz}%`;
 }
 function resetCamera(){
- state.camera.yaw=0;state.camera.pitch=.16;state.camera.distance=11.8;
- if(state.char)state.camera.desired.set(state.char.position.x,.72,state.char.position.z-2.40);
- else state.camera.desired.set(0,.72,.70);
+ state.camera.yaw=0;state.camera.pitch=.16;state.camera.distance=9.35;
+ if(state.char)state.camera.desired.set(state.char.position.x,.72,state.char.position.z-3.25);
+ else state.camera.desired.set(0,.72,-.15);
  toast('카메라 기본 앵글');
 }
 function updateCamera(dt){
  if(state.mode==='play'&&state.char){
-   state.camera.desired.set(state.char.position.x,.72,state.char.position.z-2.40);
+   state.camera.desired.set(state.char.position.x,.72,state.char.position.z-3.25);
  }else{
-   state.camera.desired.set(0,.72,.70);
+   state.camera.desired.set(0,.72,-.15);
  }
  const follow=1-Math.exp(-dt*4.5);
  state.camera.target.lerp(state.camera.desired,follow);
@@ -762,7 +835,7 @@ canvas.addEventListener('pointerup',finishPointer);
 canvas.addEventListener('pointercancel',e=>{state.drag=null;state.charDragging=false;if(state.charVisual)state.charVisual.position.y=0;canvas.style.cursor='';state.pointer.id=null;state.pointer.camera=false;postponeAuto(5000)});
 canvas.addEventListener('wheel',e=>{
  e.preventDefault();
- state.camera.distance=Math.max(9.8,Math.min(17.5,state.camera.distance+Math.sign(e.deltaY)*.60));
+ state.camera.distance=Math.max(7.8,Math.min(14.5,state.camera.distance+Math.sign(e.deltaY)*.55));
 },{passive:false});
 
 const km={ArrowLeft:'left',a:'left',A:'left',ArrowRight:'right',d:'right',D:'right',ArrowUp:'up',w:'up',W:'up',ArrowDown:'down',s:'down',S:'down'};
